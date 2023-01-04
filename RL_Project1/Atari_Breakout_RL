@@ -1,6 +1,26 @@
 import os
 import gym
-import stable_baselines3.common.atari_wrappers
-from stable_baselines3 import PPO
+from stable_baselines3 import A2C
 from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
+from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.env_util import make_atari_env
+from ale_py import ALEInterface
+from ale_py.roms import Breakout
+
+def file_setup():
+    parentFolder = "Training"
+    logsFolder = "Logs"
+    modelsFolder = "Models"
+    currentPath = os.path.abspath(os.path.dirname(__file__))
+    parentPath = os.path.normpath(os.path.join(currentPath, parentFolder))
+    logsPath = os.path.normpath(os.path.join(parentPath, logsFolder))
+    modelsPath = os.path.normpath(os.path.join(parentPath, modelsFolder))
+    if (not os.path.exists(parentPath)):
+        os.mkdir(parentPath)
+        if (not os.path.exists(logsPath)):
+            os.mkdir(logsPath)
+        if (not os.path.exists(modelsPath)):
+            os.mkdir(modelsPath)
+
+file_setup()

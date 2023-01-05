@@ -60,7 +60,7 @@ def testing_model(model: type[PPO], environment, number_of_steps=10):
 
 
 def main():
-    learning = True
+    learning = False
     testing = True
 
     environment_name = "CartPole-v1"
@@ -84,7 +84,6 @@ def main():
         print("testing the model:")
         testing_model(agent, environment, 10)
     environment.close()
-
 
 if (__name__ == "__main__"):
     main()

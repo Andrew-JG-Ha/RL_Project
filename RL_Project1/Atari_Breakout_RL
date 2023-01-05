@@ -55,9 +55,14 @@ if (testing == True):
         obs = environment.reset()
         done = False
         score = 0
-        while (not done):
+        action, _ = model.predict(obs) # now using the model
+        obs, reward, done, info = environment.step(action)
+        score += reward
+        print("obs:{}".format(obs))
+        print("reward:{}".format(reward))
+        print("done:{}".format(done))
+        print("info:{}".format(info))
+        # while (not done):
             # environment.render()
-            action, _ = model.predict(obs) # now using the model
-            obs, reward, done, info = environment.step(action)
-            score += reward
+
         print("Episode:{} Score:{}".format(step, score))

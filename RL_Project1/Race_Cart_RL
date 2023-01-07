@@ -1,0 +1,18 @@
+import os
+import gymnasium as gym
+
+
+def file_setup():
+    parentFolder = "Training"
+    logsFolder = "Logs"
+    modelsFolder = "Models"
+    currentPath = os.path.abspath(os.path.dirname(__file__))
+    parentPath = os.path.normpath(os.path.join(currentPath, parentFolder))
+    logsPath = os.path.normpath(os.path.join(parentPath, logsFolder))
+    modelsPath = os.path.normpath(os.path.join(parentPath, modelsFolder))
+    if (not os.path.exists(parentPath)):
+        os.mkdir(parentPath)
+        if (not os.path.exists(logsPath)):
+            os.mkdir(logsPath)
+        if (not os.path.exists(modelsPath)):
+            os.mkdir(modelsPath)

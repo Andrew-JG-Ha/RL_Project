@@ -1,0 +1,27 @@
+# Import Gym Dependencies
+import gym
+from gym import Env
+from gym.spaces import Discrete, Box, Dict, Tuple, MultiBinary, MultiDiscrete
+
+# Importing Helpers Libraries
+import numpy as np
+import random
+import os
+
+# Importing Stable-Baselines3 Stuff
+from stable_baselines3 import ppo
+from stable_baselines3.common.vec_env import dummy_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+
+# Observing what the spaces look like
+print(Discrete(3).sample())
+print(Box(low=0, high=1, shape=(4,4)).sample())
+print(Tuple((Discrete(1), Discrete(10))).sample())
+print(Dict({"Position": Discrete(2), "Velocity": Discrete(3)}).sample())
+print(MultiBinary([3,3]).sample())
+print(MultiDiscrete([10,2,3,4]).sample())
+
+# Simulated Environment: 
+class testEnv(Env):
+    def __init__(self) -> None:
+        super().__init__()

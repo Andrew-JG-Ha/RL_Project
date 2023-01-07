@@ -4,6 +4,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
+from stable_baselines3.common.env_checker import check_env
 
 def file_setup():
     parentFolder = "Training"
@@ -52,17 +53,15 @@ def testing_model(model: type[PPO], environment, number_of_steps=10):
         done = False
         score = 0
         while (not done):
-            environment.render()
-            action, _ = model.predict(obs) # now using the model
+            action, _states = model.predict(obs) # now using the model
             obs, reward, done, info = environment.step(action)
+            environment.render()
             score += reward
         print("Episode:{} Score:{}".format(step, score))
 
-
 def main():
     learning = False
-    testing = True
-
+    testing = False
     environment_name = "CartPole-v1"
     PPO_Path = os.path.join(os.path.dirname(__file__), "Training", "Models", "Model_" + environment_name)
     save_path = os.path.join(os.path.dirname(__file__), "Training", "Models")
@@ -79,6 +78,8 @@ def main():
         train_model_w_callback(agentWithPolicyChange, environment, savePath=save_path, total_timesteps_value=35000)
     else:
         agent = PPO.load(PPO_Path)
+
+    check_env(environment, skip_render_check=False)
 
     if (testing):
         print("testing the model:")

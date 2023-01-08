@@ -68,7 +68,14 @@ def main():
     test[0][0].T[0] = "test123123"
     test[1][1].T[0] = "test123123"
     test[0][1].T[0] = "HELLO WORLD"
-    test1 = np.argwhere(test["entity"] == "test123123")
+
+    test123.map[0][0]['entity'] = "HELLO"
+    test123.map[1][1]['entity'] = "Bonjour"
+    test123.map[2][2]['entity'] = "Salut"
+    test123.map[3][3]['entity'] = "Greetings"
+
+    test123.showBoard()
+
 
     gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))
     

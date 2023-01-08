@@ -4,45 +4,63 @@ class LOCATIONS:
     """
     This is the base class for all movement and positioning of entities onto the board
     """
-    def __init__(self, field_size, windowsWidth, windowsHeight, current_locations:type[np.array] = None) -> None:
-        self.currentEntityType = ""
-        if (current_locations == None):
-            self.dataStructure = initializeLocations(field_size, windowsWidth, windowsHeight)
+    def __init__(self, field_size, windowsWidth, windowsHeight, map:type[np.array] = None) -> None:
+        if (map == None):
+            self.map = initializeLocations(field_size, windowsWidth, windowsHeight)
         else:
-            self.dataStructure = current_locations
+            self.map = map
+        self.fieldSize = field_size
 
     def getLocations(self, entityType:type[str]):
         """
-        Returns an array of locations of the searched for object
+        Returns an array of locations of the searched for entity
         """
         return np.argwhere(self.dataStructure['entity'] == entityType)
 
-    def setLocation(self, row, column) -> None:
+    def getEntity(self, row, column) -> str:
         """
-        Sets the location of the current object
+        Returns the entity stored at the row and column entered
         """
-        self.dataStructure[row][column]['entity'] = self.currentEntityName
+        return self.dataStructure[row][column]["entity"]
+    
+    def getMap(self):
+        """
+        Returns the current ndarray map
+        """
+        return self.map
+
+    def updateEntityLocation(self, previousRow, previousColumn, newRow, newColumn, entityName) -> None:
+        """
+        Updates the location of the current object
+        """
+        self.map[previousRow][previousColumn]['entity'] = ''
+        self.map[newRow][newColumn]['entity'] = entityName
 
     def isCellOpen(self, row, column) -> bool:
         """
-        Returns a boolean on if the specified cell had an entity already
+        Returns a boolean on if the specified cell has an entity already
         """
         if (self.dataStructure[row][column]['entity'] == ""):
-            return False
-        else:
             return True
-
-    def updateEntity(self, row, column, newEntity:type[str]):
-        """
-        Updates the specified array cell's entity type
-        """
-        self.dataStructure[row][column]
+        else:
+            return False
 
     def showBoard(self) -> None:
         """"
         Prints out the board and what is stored in the data structures
         """
-        pass
+        print('─'*(16*self.fieldSize-self.fieldSize))
+        for numRows in range(0, self.fieldSize):
+            for numColumns in range(0, self.fieldSize):
+                print("| {:12} ".format(self.map[numRows][numColumns]['entity']), end='')
+            print("|")
+            print('─'*(16*self.fieldSize-self.fieldSize))
+                
+    def clearBoard(self) -> None:
+        """
+        Removes all entities on the board and resets them to be empty strings: ''
+        """
+        self.map['entity'] = ''
 
 # Helper Functions
 def initializeLocations(field_size, windowsWidth, windowsHeight):

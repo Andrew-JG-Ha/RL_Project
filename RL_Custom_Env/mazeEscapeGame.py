@@ -57,13 +57,19 @@ def main():
     pygame.init()
     running = True
 
-    horizontal_partitions = 5
-    vertical_partitions = 5
+    fieldSize = 5
+
+    test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8')])
+    test[0][0].T[0] = "test123123"
+    test[1][1].T[0] = "test123123"
+    test[0][1].T[0] = "HELLO WORLD"
+    test1 = np.argwhere(test["entity"] == "test123123")
+
     gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))
     
     pygame.display.set_caption("Maze Escape")
     while running:
-        generate_environment(gameDisplay, seed=0, field_size=5)
+        generate_environment(gameDisplay, seed=0, field_size=fieldSize)
         pygame.display.update()
 
         for event in pygame.event.get():

@@ -4,12 +4,10 @@ class LOCATIONS:
     """
     This is the base class for all movement and positioning of entities onto the board
     """
-    def __init__(self, field_size, windowsDimensions:type[np.array(int, int)], current_locations:type[np.array] = None) -> None:
-        self.currentEntityName = ""
-        self.currentLocationX
-        self.currentLocationY 
-        if (current_locations.size == 0 or current_locations == None):
-            self.dataStructure = initializeLocations(field_size, windowsDimensions[0], windowsDimensions[1])
+    def __init__(self, field_size, windowsWidth, windowsHeight, current_locations:type[np.array] = None) -> None:
+        self.currentEntityType = ""
+        if (current_locations == None):
+            self.dataStructure = initializeLocations(field_size, windowsWidth, windowsHeight)
         else:
             self.dataStructure = current_locations
 
@@ -17,22 +15,36 @@ class LOCATIONS:
         """
         Returns an array of locations of the searched for object
         """
-        np.array()
         return np.argwhere(self.dataStructure['entity'] == entityType)
 
-    def setLocation(self, newValueX, newValueY) -> None:
+    def setLocation(self, row, column) -> None:
         """
         Sets the location of the current object
         """
-        self.dataStructure[newValueY][newValueX]['entity'] = self.currentEntityName
+        self.dataStructure[row][column]['entity'] = self.currentEntityName
 
-    def moveLocation(self, newValueX, newValueY):
+    def isCellOpen(self, row, column) -> bool:
         """
-        Moves the object to the next specified location, then returns the updated locations of all parts
+        Returns a boolean on if the specified cell had an entity already
+        """
+        if (self.dataStructure[row][column]['entity'] == ""):
+            return False
+        else:
+            return True
+
+    def updateEntity(self, row, column, newEntity:type[str]):
+        """
+        Updates the specified array cell's entity type
+        """
+        self.dataStructure[row][column]
+
+    def showBoard(self) -> None:
+        """"
+        Prints out the board and what is stored in the data structures
         """
         pass
 
-
+# Helper Functions
 def initializeLocations(field_size, windowsWidth, windowsHeight):
     initialDS = np.zeros((field_size, field_size), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8')])
     partitionWidth = int(windowsWidth/field_size)

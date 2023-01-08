@@ -1,6 +1,8 @@
 import pygame
 import random
 import numpy as np
+import sys
+from ClassesMazeEscape.LOCATIONS import LOCATIONS
 """
 1. Create the environment, 5x5 (scalable maze, code it so that it can be as large as I want) maze with obstacles and rewards
 2. General class for the player agent (can eventually lead to enemies?)
@@ -15,6 +17,7 @@ import numpy as np
     - Traps: Deduction in moves or points
     - Trophy: +10 points
 """
+
 
 # COLORS
 black = (0,0,0)
@@ -58,6 +61,8 @@ def main():
     running = True
 
     fieldSize = 5
+
+    test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
 
     test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8')])
     test[0][0].T[0] = "test123123"

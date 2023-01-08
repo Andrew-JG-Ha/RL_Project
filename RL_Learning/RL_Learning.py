@@ -5,6 +5,8 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
 from stable_baselines3.common.env_checker import check_env
+import math
+import numpy as np
 
 def file_setup():
     parentFolder = "Training"
@@ -60,8 +62,8 @@ def testing_model(model: type[PPO], environment, number_of_steps=10):
         print("Episode:{} Score:{}".format(step, score))
 
 def main():
-    learning = False
-    testing = False
+    learning = True
+    testing = True
     environment_name = "CartPole-v1"
     PPO_Path = os.path.join(os.path.dirname(__file__), "Training", "Models", "Model_" + environment_name)
     save_path = os.path.join(os.path.dirname(__file__), "Training", "Models")
@@ -71,15 +73,14 @@ def main():
     environment = setup_environment(environment_name)
 
     if (learning):
+        print("Training with PPO Model With Callback:")
         agent = setup_agent(environment, log_path)
+        train_model_w_callback(agent, environment, savePath=save_path, total_timesteps_value=35000)
         agentWithPolicyChange = setup_agent_w_policy_change(environment, log_path)
         train_model_basic(agent, PPO_Path, 35000)
-        train_model_w_callback(agent, environment, savePath=save_path, total_timesteps_value=35000)
         train_model_w_callback(agentWithPolicyChange, environment, savePath=save_path, total_timesteps_value=35000)
     else:
         agent = PPO.load(PPO_Path)
-
-    check_env(environment, skip_render_check=False)
 
     if (testing):
         print("testing the model:")

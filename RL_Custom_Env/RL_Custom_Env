@@ -22,6 +22,22 @@ print(MultiBinary([3,3]).sample())
 print(MultiDiscrete([10,2,3,4]).sample())
 
 # Simulated Environment: 
-class testEnv(Env):
+"""
+To escape a 5x5 hex maze, agent starts on one hex, and must avoid obstacles to find the most optimized path to the end
+action_space: can move left, right, up, down
+"""
+class mazeEscape(Env):
     def __init__(self) -> None:
+        self.action_space = Discrete(4)
+        self.observation_space = 
         super().__init__()
+
+    def step(self, action):
+        
+        pass
+
+    def render(self):
+        pass
+
+    def reset(self):
+        pass

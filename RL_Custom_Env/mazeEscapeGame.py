@@ -25,24 +25,33 @@ blue = (0,0,255)
 windowsWidth = 1280
 windowsHeight = 720
 
-def generate_environment(screen, seed=0, field_size=5):
+def generate_environment(gameDisplay, seed=0, field_size=5):
     """
-    generates the environment, creates the playing field, and randomly places obstacles and bonuses.
+    Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
     assigns:
     - start location
     - end location
     - 3 * Walls
     - 3 * Ditches
+
+    returns a data structure (numpy array of characters, where each character relates to the status of the cell) 
+    that contains the details on the placement of all obstacles, and the start and end locations
+    [[1, 1, 1]
+     [1, 1, 1]
+     [1, 1, 1]]
     """
-    screen.fill(white)
-    create_grid(screen, field_size)
+    gameDisplay.fill(white)
+    create_grid(gameDisplay, field_size)
     
-def create_grid(screen, field_size=5):
+def create_grid(gameDisplay, field_size=5):
+    """
+    Generates the grids onto the gameDisplay of 
+    """
     partition_width = int(windowsWidth/field_size)
     partition_height = int(windowsHeight/field_size)
     for partition_number in range(1, field_size):
-        pygame.draw.line(screen, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), windowsHeight), width=2) # draw vertical lines
-        pygame.draw.line(screen, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
+        pygame.draw.line(gameDisplay, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), windowsHeight), width=2) # draw vertical lines
+        pygame.draw.line(gameDisplay, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
 
 def main():
     pygame.init()
@@ -54,10 +63,8 @@ def main():
     
     pygame.display.set_caption("Maze Escape")
     while running:
-        
         generate_environment(gameDisplay, seed=0, field_size=5)
         pygame.display.update()
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -6,7 +6,7 @@ class AGENT(LOCATIONS):
     This is the class defining the player's movement and points
     """
     def __init__(self, field_size, windowsWidth, windowsHeight, startRow, startColumn, map) -> None:
-        super().__init__(field_size, windowsWidth, windowsHeight, map)
+        super().__init__(field_size, windowsWidth, windowsHeight, startRow, startColumn)
         self.currentEntityName = "player"
         self.currentRow = startRow
         self.currentColumn = startColumn
@@ -17,6 +17,7 @@ class AGENT(LOCATIONS):
             newColumn = self.currentColumn - 1
             if (self.isOutOfBounds(self.currentRow, newColumn)):
                 # reset to start? don't do anything - act as wall?
+                pass
 
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
@@ -43,12 +44,16 @@ class AGENT(LOCATIONS):
         """
         if (self.isOutOfBounds(row, column)):
             # Puts the agent back to the start
+            # reward-100
+            pass
 
         elif (self.isWall(row, column)):
             # Agent Cannot Move to cell, so it stays at current location
-            
+            pass
+
         elif (self.isTrap(row, column)):
             # Action is dependent on the trap?
+            pass
 
     def isOutOfBounds(self, row, column) -> bool:
         """

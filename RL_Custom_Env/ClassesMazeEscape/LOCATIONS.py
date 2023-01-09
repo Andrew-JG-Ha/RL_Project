@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class LOCATIONS:
     """
@@ -7,6 +8,7 @@ class LOCATIONS:
     def __init__(self, field_size, windowsWidth, windowsHeight) -> None:
         self.map = initializeLocations(field_size, windowsWidth, windowsHeight)
         self.fieldSize = field_size
+        self.randomizeStartEnd()
 
     def __init__(self, field_size, windowsWidth, windowsHeight, startCoord, endCoord) -> None:
         self.map = initializeLocations(field_size, windowsWidth, windowsHeight)
@@ -37,6 +39,18 @@ class LOCATIONS:
         Update the existing map stored within object
         """
         self.map = map
+
+    def setStart(self, row, column):
+        """
+        Updates the fieldEffect member in the datastructure to be 'start'
+        """
+        self.map[row][column]['fieldEffect'] = 'start'
+
+    def setEnd(self, row, column):
+        """
+        Updates the fieldEffect member in the datastructure to be 'end'
+        """
+        self.map[row][column]['fieldEffect'] = 'end'
     
     def placeOnMap(self, row, column, entityName) -> None:
         """
@@ -55,21 +69,25 @@ class LOCATIONS:
         """
         Updates the location of the start
         """
-        currentLocation = self.getLocations('start')
-        self.updateEntityLocation(currentLocation[0], currentLocation[1], newRow, newColumn, 'start')
+        previousLocations = np.argwhere(self.map['fieldEffect'] == 'start')
+        for location in previousLocations:
+            self.map[location[0]][location[1]]['fieldEffect'] = ''
+        self.map[newRow][newColumn]['fieldEffect'] = 'start'
 
     def updateEndLocation(self, newRow, newColumn):
         """
         Updates the location of the end
         """
-        currentLocation = self.getLocations('end')
-        self.updateEntityLocation(currentLocation[0], currentLocation[1], newRow, newColumn, 'end')
+        previousLocations = np.argwhere(self.map['fieldEffect'] == 'end')
+        for location in previousLocations:
+            self.map[location[0]][location[1]]['fieldEffect'] = ''
+        self.map[newRow][newColumn]['fieldEffect'] = 'end'
 
     def isCellOpen(self, row, column) -> bool:
         """
         Returns a boolean on if the specified cell has an entity already
         """
-        if (self.dataStructure[row][column]['entity'] == ""):
+        if (self.map[row][column]['entity'] == ''):
             return True
         else:
             return False
@@ -90,15 +108,28 @@ class LOCATIONS:
         Removes all entities on the board and resets them to be empty strings: ''
         """
         self.map['entity'] = ''
+        self.map['fieldEffect'] = ''
 
-    def randomizeStartEnd(self):
+    def randomizeStartEnd(self) -> None:
         """
         Randomize the locations of the start and end and ensure they are on opposite ends of one another
         """
+        bounds = self.fieldSize
+        startColumn = random.choice([0, bounds]) # 0 means start will be on left side, 1 means start will be on the right side
+        endColumn = bounds
+        if (startColumn == bounds):
+            endColumn = 0
+        startRow = random.randint(0, bounds)
+        endRow = random.randint(0, bounds)
+        if (startRow == endRow):
+            startRow = startRow + 1
+            endRow = endRow - 1
+        self.updateStartLocation(startRow, startColumn)
+        self.updateEndLocation(endRow, endColumn)
 
 # Helper Functions
 def initializeLocations(field_size, windowsWidth, windowsHeight):
-    initialDS = np.zeros((field_size, field_size), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8')])
+    initialDS = np.zeros((field_size, field_size), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('fieldEffect', '<U20')])
     partitionWidth = int(windowsWidth/field_size)
     partitionHeight = int(windowsHeight/field_size)
     partitionWidthHalved = int(partitionWidth/2)

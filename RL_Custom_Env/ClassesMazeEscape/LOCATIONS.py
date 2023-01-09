@@ -10,12 +10,6 @@ class LOCATIONS:
         self.fieldSize = field_size
         self.randomizeStartEnd()
 
-    def __init__(self, field_size, windowsWidth, windowsHeight, startCoord, endCoord) -> None:
-        self.map = initializeLocations(field_size, windowsWidth, windowsHeight)
-        self.fieldSize = field_size
-        self.updateStartLocation(startCoord[0], startCoord[1])
-        self.updateEndLocation(endCoord[0], endCoord[1])
-
     def getLocations(self, entityType:type[str]):
         """
         Returns an array of locations of the searched for entity
@@ -114,7 +108,7 @@ class LOCATIONS:
         """
         Randomize the locations of the start and end and ensure they are on opposite ends of one another
         """
-        bounds = self.fieldSize
+        bounds = self.fieldSize - 1
         startColumn = random.choice([0, bounds]) # 0 means start will be on left side, 1 means start will be on the right side
         endColumn = bounds
         if (startColumn == bounds):

@@ -64,10 +64,14 @@ def main():
 
     # map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
 
-    test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('isStart', '?'), ('isEnd', '?')])
-    test[0][0].T[0] = "test123123"
-    test[1][1].T[0] = "test123123"
-    test[0][1].T[0] = "HELLO WORLD"
+    test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
+
+    test123.showBoard()
+
+    # test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('isStart', '?'), ('isEnd', '?')])
+    # test[0][0].T[0] = "test123123"
+    # test[1][1].T[0] = "test123123"
+    # test[0][1].T[0] = "HELLO WORLD"
 
 
     gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))

@@ -65,7 +65,7 @@ def main():
     # map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
 
     test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-
+    hello = test123.getMap()
     test123.showBoard()
 
     # test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('isStart', '?'), ('isEnd', '?')])

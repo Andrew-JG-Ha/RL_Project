@@ -93,7 +93,12 @@ class LOCATIONS:
         print('─'*(16*self.fieldSize-self.fieldSize))
         for numRows in range(0, self.fieldSize):
             for numColumns in range(0, self.fieldSize):
-                print("| {:12} ".format(self.map[numRows][numColumns]['entity']), end='')
+                if (self.map[numRows][numColumns]['fieldEffect'] == 'start'):
+                    print("|S:{:12}".format(self.map[numRows][numColumns]['entity']), end='')
+                elif (self.map[numRows][numColumns]['fieldEffect'] == 'end'):
+                    print("|E:{:12}".format(self.map[numRows][numColumns]['entity']), end='')
+                else:
+                    print("| {:12} ".format(self.map[numRows][numColumns]['entity']), end='')
             print("|")
             print('─'*(16*self.fieldSize-self.fieldSize))
                 
@@ -116,8 +121,8 @@ class LOCATIONS:
         startRow = random.randint(0, bounds)
         endRow = random.randint(0, bounds)
         if (startRow == endRow):
-            startRow = startRow + 1
-            endRow = endRow - 1
+            startRow = (startRow + 1) % bounds
+            endRow = (endRow - 1) % bounds
         self.updateStartLocation(startRow, startColumn)
         self.updateEndLocation(endRow, endColumn)
 

@@ -70,11 +70,12 @@ def main():
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, testMap)
     myStart = test123.getStart()
     test123.showBoard()
-
-    # test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('isStart', '?'), ('isEnd', '?')])
-    # test[0][0].T[0] = "test123123"
-    # test[1][1].T[0] = "test123123"
-    # test[0][1].T[0] = "HELLO WORLD"
+    myAgent.move('right')
+    test123.showBoard()
+    myAgent.move('up')
+    myAgent.move('up')
+    myAgent.move('up')
+    test123.showBoard()
 
 
     gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))

@@ -1,59 +1,72 @@
-import LOCATIONS
+from ClassesMazeEscape.LOCATIONS import LOCATIONS
 import numpy as np
 
 class AGENT(LOCATIONS):
     """
     This is the class defining the player's movement and points
     """
-    def __init__(self, field_size, windowsWidth, windowsHeight, startRow, startColumn, map) -> None:
-        super().__init__(field_size, windowsWidth, windowsHeight, startRow, startColumn)
+    def __init__(self, field_size, windowsWidth, windowsHeight, map, startRow = None, startColumn = None) -> None:
+        super().__init__(field_size, windowsWidth, windowsHeight)
         self.currentEntityName = "player"
-        self.currentRow = startRow
-        self.currentColumn = startColumn
+        if (startColumn is not None and startRow is not None):
+            self.currentRow = startRow
+            self.currentColumn = startColumn
+        else:
+            self.currentRow, self.currentColumn = self.getStart()
         self.setMap(map)
+        self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
+        self.totalReward = 0
 
     def move(self, action):
         if (action == 'left'):
             newColumn = self.currentColumn - 1
-            if (self.isOutOfBounds(self.currentRow, newColumn)):
-                # reset to start? don't do anything - act as wall?
-                pass
+            if (self.moveValid == True):
+                previousColumn = self.currentColumn
+                self.currentColumn = newColumn
+                self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
-            if (self.isOutOfBounds(self.currentRow, newColumn)):
-                pass
+            if (self.moveValid == True):
+                previousColumn = self.currentColumn
+                self.currentColumn = newColumn
+                self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'up'):
-            newRow = self.currentRow - 1
-            if (self.isOutOfBounds(newRow, self.currentColumn)):
-                pass
+            if (self.moveValid == True):
+                previousRow = self.currentRow
+                self.currentRow = newRow
+                self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'down'):
             newRow = self.currentRow + 1
-            if (self.isOutOfBounds(newRow, self.currentColumn)):
-                pass
+            if (self.moveValid == True):
+                previousRow = self.currentRow
+                self.currentRow = newRow
+                self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
         else:
             pass
             # stay at current cell
         pass
 
-    def moveResult(self, row, column):
+    def moveValid(self, row, column):
         """
         Returns the new row and column of the agent
         """
-        if (self.isOutOfBounds(row, column)):
-            # Puts the agent back to the start
-            # reward-100
-            pass
-
-        elif (self.isWall(row, column)):
-            # Agent Cannot Move to cell, so it stays at current location
-            pass
+        if (self.isOutOfBounds(row, column) or self.isWall(row, column)):
+            # Remains on same cell
+            self.totalReward -= 100
+            return False
 
         elif (self.isTrap(row, column)):
             # Action is dependent on the trap?
-            pass
+            # Can move onto a trap but deduction in points
+            self.totalReward -= 25
+            # Traps will have unique abilities - to be added
+            return False
+        else:
+            # Is valid move, no deduction
+            return True
 
     def isOutOfBounds(self, row, column) -> bool:
         """

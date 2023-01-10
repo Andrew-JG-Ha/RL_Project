@@ -3,6 +3,7 @@ import random
 import numpy as np
 import sys
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
+from ClassesMazeEscape.AGENT import AGENT
 """
 1. Create the environment, 5x5 (scalable maze, code it so that it can be as large as I want) maze with obstacles and rewards
 2. General class for the player agent (can eventually lead to enemies?)
@@ -48,7 +49,7 @@ def generate_environment(gameDisplay, seed=0, field_size=5):
     
 def create_grid(gameDisplay, field_size=5):
     """
-    Generates the grids onto the gameDisplay of 
+    Generates the grids onto the gameDisplay of the pygame window
     """
     partition_width = int(windowsWidth/field_size)
     partition_height = int(windowsHeight/field_size)
@@ -65,7 +66,9 @@ def main():
     # map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
 
     test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-    hello = test123.getMap()
+    testMap = test123.getMap()
+    myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, testMap)
+    myStart = test123.getStart()
     test123.showBoard()
 
     # test = np.zeros((5, 5), dtype=[('entity', '<U10'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('isStart', '?'), ('isEnd', '?')])

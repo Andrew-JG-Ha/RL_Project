@@ -14,19 +14,26 @@ class LOCATIONS:
         """
         Returns an array of locations of the searched for entity
         """
-        return np.argwhere(self.dataStructure['entity'] == entityType)
+        return np.argwhere(self.map['entity'] == entityType)
 
     def getEntity(self, row, column) -> str:
         """
         Returns the entity stored at the row and column entered
         """
-        return self.dataStructure[row][column]["entity"]
+        return self.map[row][column]["entity"]
     
     def getMap(self):
         """
         Returns the current ndarray map
         """
         return self.map
+
+    def getStart(self):
+        """
+        Get the start coordinates
+        """
+        startCoords = np.argwhere(self.map['fieldEffect'] == 'start')[0]
+        return startCoords[0], startCoords[1]
 
     def setMap(self, map):
         """
@@ -52,10 +59,11 @@ class LOCATIONS:
         """
         self.map[row][column]['entity'] = entityName
 
-    def updateEntityLocation(self, previousRow, previousColumn, newRow, newColumn, entityName) -> None:
+    def updateEntityLocation(self, previousRow, previousColumn, newRow, newColumn) -> None:
         """
         Updates the location of the current object
         """
+        entityName = self.map[previousRow][previousColumn]['entity']
         self.map[previousRow][previousColumn]['entity'] = ''
         self.map[newRow][newColumn]['entity'] = entityName
 

@@ -65,14 +65,14 @@ def main():
 
     # map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
 
-    test123 = LOCATIONS(fieldSize+5, windowsWidth, windowsHeight)
+    test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     testMap = test123.getMap()
-    myAgent = AGENT(fieldSize+5, windowsWidth, windowsHeight, testMap)
+    myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, testMap)
     myStart = test123.getStart()
     test123.showBoard()
 
     while running:
-        action = input("please enter an action")
+        action = input("please enter an action: ")
         if (action == 'left' or action == 'right' or action == 'up' or action == 'down'):
             myAgent.move(action)
             test123.showBoard()

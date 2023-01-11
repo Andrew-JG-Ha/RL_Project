@@ -21,38 +21,40 @@ class AGENT(LOCATIONS):
     def move(self, action):
         if (action == 'left'):
             newColumn = self.currentColumn - 1
-            if (self.moveValid(self.currentRow, newColumn) == True):
+            if (self.isMoveValid(self.currentRow, newColumn) == True):
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
-            if (self.moveValid(self.currentRow, newColumn) == True):
+            if (self.isMoveValid(self.currentRow, newColumn) == True):
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'up'):
             newRow = self.currentRow - 1
-            if (self.moveValid(newRow, self.currentColumn) == True):
+            if (self.isMoveValid(newRow, self.currentColumn) == True):
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
 
         elif (action == 'down'):
             newRow = self.currentRow + 1
-            if (self.moveValid(newRow, self.currentColumn) == True):
+            if (self.isMoveValid(newRow, self.currentColumn) == True):
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
         else:
             pass
             # stay at current cell
+        self.actionLog.append(action)
 
-    def moveValid(self, row, column):
+
+    def isMoveValid(self, row, column):
         """
-        Returns the new row and column of the agent
+        Checks to see if the move is a valid move and assigns appropriate deductions 
         """
         if (self.isOutOfBounds(row, column)):
             # Remains on same cell
@@ -60,7 +62,7 @@ class AGENT(LOCATIONS):
             return False
         else:
             if (self.isTrap(row, column)):
-                # Action is dependent on the trap?
+                # Action is dependent on the trap - will add later
                 # Can move onto a trap but deduction in points
                 self.totalReward -= 25
                 # Traps will have unique abilities - to be added
@@ -108,3 +110,23 @@ class AGENT(LOCATIONS):
         else:
             return False
 
+    def isCurrentEnd(self) -> bool:
+        """
+        Checks to see if the player's current cell is the end cell
+        """
+        fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
+        if (fieldEffect == "end"):
+            return True
+        else:
+            return False
+
+    def restartPlayer(self):
+        """
+        Sets the player to the starting cell and resets all scoring
+        """
+        self.totalReward = 0
+        self.actionLog.clear()
+        previousColumn = self.currentColumn
+        previousRow = self.currentRow
+        self.currentRow, self.currentColumn = self.getStart()
+        self.updateEntityLocation(previousRow, previousColumn, self.currentRow, self.currentColumn)

@@ -5,9 +5,10 @@ class LOCATIONS:
     """
     This is the base class for all movement and positioning of entities onto the board
     """
-    def __init__(self, field_size, windowsWidth, windowsHeight) -> None:
-        self.map = initializeLocations(field_size, windowsWidth, windowsHeight)
-        self.fieldSize = field_size
+    def __init__(self, fieldSize, windowsWidth, windowsHeight) -> None:
+        self.map = initializeLocations(fieldSize, windowsWidth, windowsHeight)
+        self.fieldSize = fieldSize
+        self.isContinuousGame = False
         self.randomizeStartEnd()
 
     def getLocations(self, entityType:type[str]):
@@ -22,6 +23,12 @@ class LOCATIONS:
         """
         return self.map[row][column]["entity"]
     
+    def getFieldEffect(self, row, column) -> str:
+        """
+        Returns the Field Effect name at the row and column entered
+        """
+        return self.map[row][column]["fieldEffect"]
+
     def getMap(self):
         """
         Returns the current ndarray map
@@ -134,15 +141,22 @@ class LOCATIONS:
         self.updateStartLocation(startRow, startColumn)
         self.updateEndLocation(endRow, endColumn)
 
+    def remakeMap(self):
+        """
+        Restarts and resets the map, randomizes the start and end locations
+        """
+        self.clearBoard()
+        self.randomizeStartEnd()
+
 # Helper Functions
-def initializeLocations(field_size, windowsWidth, windowsHeight):
-    initialDS = np.zeros((field_size, field_size), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('fieldEffect', '<U20')])
-    partitionWidth = int(windowsWidth/field_size)
-    partitionHeight = int(windowsHeight/field_size)
+def initializeLocations(fieldSize, windowsWidth, windowsHeight):
+    initialDS = np.zeros((fieldSize, fieldSize), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('fieldEffect', '<U20')])
+    partitionWidth = int(windowsWidth/fieldSize)
+    partitionHeight = int(windowsHeight/fieldSize)
     partitionWidthHalved = int(partitionWidth/2)
     partitionHeightHalved = int(partitionHeight/2)
-    for partitionNumberX in range(0, field_size):
-        for partitionNumberY in range(0, field_size):
+    for partitionNumberX in range(0, fieldSize):
+        for partitionNumberY in range(0, fieldSize):
             initialDS[partitionNumberY][partitionNumberX]['x_pos'] = partitionWidthHalved + partitionNumberX*partitionWidth
             initialDS[partitionNumberY][partitionNumberX]['y_pos'] = partitionHeightHalved + partitionNumberY*partitionHeight
     return initialDS

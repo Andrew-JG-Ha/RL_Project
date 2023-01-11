@@ -64,9 +64,8 @@ def main():
     fieldSize = 7
 
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-    environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap(), 5, 5)
+    environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
-    environment.showBoard()
     map.showBoard()
 
     while running:

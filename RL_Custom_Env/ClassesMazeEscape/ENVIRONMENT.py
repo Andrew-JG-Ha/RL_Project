@@ -3,6 +3,7 @@ import random
 
 trapList = ['hole', 'spikeTrap', 'glue']
 terrainList = ['wall', 'mountain', 'blockade']
+bonusList = ['trophy', 'treasure']
 
 class ENVIRONMENT(LOCATIONS):
     """
@@ -14,19 +15,20 @@ class ENVIRONMENT(LOCATIONS):
         self.fieldSize = fieldSize
         self.terrainLocations = list()
         self.trapLocations = list()
+        self.bonusLocations = list()
         if (isTraps):
             numberOfTraps = fieldSize + 1
         else:
             numberOfTraps = 0
         if (isTerrain):
-            numberOfTerrains = fieldSize - 1
+            numberOfTerrains = fieldSize
         else:
             numberOfTerrains = 0
         self.initiateEnvironment(numberOfTerrains, numberOfTraps)
     
     def addImpassableTerrain(self, row, column, terrainNumber) -> None:
         """"
-        Updates the entity at row and column to be a 'wall'
+        Updates the entity at row and column to be an impassable terrain of the given terrain number
         """
         if (self.isCellOpen(row, column) == True and self.isFieldEffect(row, column) == False):
             terrain = terrainList[terrainNumber]
@@ -35,14 +37,23 @@ class ENVIRONMENT(LOCATIONS):
 
     def addTrap(self, row, column, trapNumber) -> None:
         """
-        Updates the entity at row and column to be a trap of of given trap type
+        Updates the entity at row and column to be a trap of the given trap number
         """
         if (self.isCellOpen(row, column) == True and self.isFieldEffect(row, column) == False):
             trap = trapList[trapNumber]
             self.placeOnMap(row, column, trap)
             self.trapLocations.append((trap, (row, column)))
 
-    def initiateEnvironment(self, numberOfTerrains, numberOfTraps, trapType = None, terrainType = None):
+    def addBonus(self, row, column, bonusNumber) -> None:
+        """
+        Updates the entity at the row and column to be a bonus of the given bonus number
+        """
+        if (self.isCellOpen(row, column) == True and self.isFieldEffect(row, column) == False):
+            bonus = bonusList[bonusNumber]
+            self.placeOnMap(row, column, bonus)
+            self.bonusLocations.append((bonus, (row, column)))
+
+    def initiateEnvironment(self, numberOfTerrains, numberOfTraps, numberOfBonuses = 1, trapType = None, terrainType = None, bonusType = None):
         """
         Initializes the environment and randomly places 'numberOfWalls' of walls and 'numberOfTraps' of traps on the map
         """
@@ -55,14 +66,24 @@ class ENVIRONMENT(LOCATIONS):
             terrainNumber = random.randrange(0, len(terrainList) - 1)
         else:
             terrainNumber = terrainType
-        while len(self.trapLocations) <= numberOfTraps:
+        if (bonusType == None):
+            bonusNumber = random.randrange(0, len(bonusList) - 1)
+        else:
+            bonusNumber = bonusType
+        while len(self.trapLocations) < numberOfTraps:
             trapColumn = random.randrange(0, bounds)
             trapRow = random.randrange(0, bounds)
             self.addTrap(trapRow, trapColumn, trapNumber)
-        while len(self.terrainLocations) <= numberOfTerrains:
+
+        while len(self.terrainLocations) < numberOfTerrains:
             terrainColumn = random.randrange(0, bounds)
             terrainRow = random.randrange(0, bounds)
             self.addImpassableTerrain(terrainRow, terrainColumn, terrainNumber)
+            
+        while len(self.bonusLocations) < numberOfBonuses:
+            bonusColumn = random.randrange(0, bounds)
+            bonusRow = random.randrange(0, bounds)
+            self.addBonus(bonusRow, bonusColumn, bonusNumber)
         
     def clearEnvironment(self) -> None:
         """
@@ -78,3 +99,8 @@ class ENVIRONMENT(LOCATIONS):
             terrainRow = terrainLocation[0]
             terrainColumn = terrainLocation[1]
             self.setEmpty(terrainRow, terrainColumn)
+        while len(self.bonusLocations) > 0:
+            bonusLocation = self.bonusLocations.pop()[1]
+            bonusRow = bonusLocation[0]
+            bonusColumn = bonusLocation[1]
+            self.setEmpty(bonusRow, bonusColumn)

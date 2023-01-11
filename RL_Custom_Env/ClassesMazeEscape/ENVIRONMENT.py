@@ -9,7 +9,7 @@ class ENVIRONMENT(LOCATIONS):
     """
     This is the class for cell information: impassable terrain, traps
     """
-    def __init__(self, fieldSize, windowsWidth, windowsHeight, map, isTraps = True, isTerrain = True) -> None:
+    def __init__(self, fieldSize, windowsWidth, windowsHeight, map, isTraps = True, isTerrain = True, numberBonuses = 1) -> None:
         super().__init__(fieldSize, windowsWidth, windowsHeight)
         self.setMap(map)
         self.fieldSize = fieldSize
@@ -24,7 +24,7 @@ class ENVIRONMENT(LOCATIONS):
             numberOfTerrains = fieldSize
         else:
             numberOfTerrains = 0
-        self.initiateEnvironment(numberOfTerrains, numberOfTraps)
+        self.initiateEnvironment(numberOfTerrains, numberOfTraps, numberBonuses)
     
     def addImpassableTerrain(self, row, column, terrainNumber) -> None:
         """"

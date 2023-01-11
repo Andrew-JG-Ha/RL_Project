@@ -60,6 +60,12 @@ class LOCATIONS:
         """
         self.map[row][column]['fieldEffect'] = 'end'
     
+    def setEmpty(self, row, column) -> None:
+        """
+        Sets the input row and column's entity value to be '' (empty)
+        """
+        self.map[row][column]['entity'] = ''
+    
     def placeOnMap(self, row, column, entityName) -> None:
         """
         Places an object on the map
@@ -74,7 +80,7 @@ class LOCATIONS:
         self.map[previousRow][previousColumn]['entity'] = ''
         self.map[newRow][newColumn]['entity'] = entityName
 
-    def updateStartLocation(self, newRow, newColumn):
+    def updateStartLocation(self, newRow, newColumn) -> None:
         """
         Updates the location of the start
         """
@@ -83,7 +89,7 @@ class LOCATIONS:
             self.map[location[0]][location[1]]['fieldEffect'] = ''
         self.map[newRow][newColumn]['fieldEffect'] = 'start'
 
-    def updateEndLocation(self, newRow, newColumn):
+    def updateEndLocation(self, newRow, newColumn) -> None:
         """
         Updates the location of the end
         """
@@ -100,6 +106,15 @@ class LOCATIONS:
             return True
         else:
             return False
+
+    def isFieldEffect(self, row, column) -> bool:
+        """
+        Returns a boolean on if the specified cell has a field effect
+        """
+        if (self.map[row][column]['fieldEffect'] == ''):
+            return False
+        else:
+            return True
 
     def showBoard(self) -> None:
         """"
@@ -141,7 +156,7 @@ class LOCATIONS:
         self.updateStartLocation(startRow, startColumn)
         self.updateEndLocation(endRow, endColumn)
 
-    def remakeMap(self):
+    def remakeMap(self) -> None:
         """
         Restarts and resets the map, randomizes the start and end locations
         """

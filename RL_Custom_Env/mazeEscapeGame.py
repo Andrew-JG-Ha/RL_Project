@@ -1,9 +1,9 @@
 import pygame
-import random
 import numpy as np
 import sys
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 from ClassesMazeEscape.AGENT import AGENT
+from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT
 """
 1. Create the environment, 5x5 (scalable maze, code it so that it can be as large as I want) maze with obstacles and rewards
 2. General class for the player agent (can eventually lead to enemies?)
@@ -61,21 +61,19 @@ def main():
     pygame.init()
     running = True
 
-    fieldSize = 5
+    fieldSize = 7
 
-    # map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-
-    test123 = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-    testMap = test123.getMap()
-    myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, testMap)
-    myStart = test123.getStart()
-    test123.showBoard()
+    map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
+    environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap(), 5, 5)
+    myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
+    environment.showBoard()
+    map.showBoard()
 
     while running:
         action = input("please enter an action: ")
         if (action == 'left' or action == 'right' or action == 'up' or action == 'down'):
             myAgent.move(action)
-            test123.showBoard()
+            map.showBoard()
         else:
             break
 

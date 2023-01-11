@@ -1,10 +1,80 @@
-import LOCATIONS
+from ClassesMazeEscape.LOCATIONS import LOCATIONS
+import random
+
+trapList = ['hole', 'spikeTrap', 'glue']
+terrainList = ['wall', 'mountain', 'blockade']
 
 class ENVIRONMENT(LOCATIONS):
     """
-    This is the class for cell information: walls, ditches, traps
+    This is the class for cell information: impassable terrain, traps
     """
-    def __init__(self) -> None:
-        super().__init__()
-        
+    def __init__(self, fieldSize, windowsWidth, windowsHeight, map, isTraps = True, isTerrain = True) -> None:
+        super().__init__(fieldSize, windowsWidth, windowsHeight)
+        self.setMap(map)
+        self.fieldSize = fieldSize
+        self.terrainLocations = list()
+        self.trapLocations = list()
+        if (isTraps):
+            numberOfTraps = fieldSize + 1
+        else:
+            numberOfTraps = 0
+        if (isTerrain):
+            numberOfTerrains = fieldSize - 1
+        else:
+            numberOfTerrains = 0
+        self.initiateEnvironment(numberOfTerrains, numberOfTraps)
     
+    def addImpassableTerrain(self, row, column, terrainNumber) -> None:
+        """"
+        Updates the entity at row and column to be a 'wall'
+        """
+        if (self.isCellOpen(row, column) == True and self.isFieldEffect(row, column) == False):
+            terrain = terrainList[terrainNumber]
+            self.placeOnMap(row, column, terrain)
+            self.terrainLocations.append((terrain, (row, column)))
+
+    def addTrap(self, row, column, trapNumber) -> None:
+        """
+        Updates the entity at row and column to be a trap of of given trap type
+        """
+        if (self.isCellOpen(row, column) == True and self.isFieldEffect(row, column) == False):
+            trap = trapList[trapNumber]
+            self.placeOnMap(row, column, trap)
+            self.trapLocations.append((trap, (row, column)))
+
+    def initiateEnvironment(self, numberOfTerrains, numberOfTraps, trapType = None, terrainType = None):
+        """
+        Initializes the environment and randomly places 'numberOfWalls' of walls and 'numberOfTraps' of traps on the map
+        """
+        bounds = self.fieldSize - 1
+        if (trapType == None):
+            trapNumber = random.randrange(0, len(trapList) - 1)
+        else:
+            trapNumber = trapType
+        if (terrainType == None):
+            terrainNumber = random.randrange(0, len(terrainList) - 1)
+        else:
+            terrainNumber = terrainType
+        while len(self.trapLocations) <= numberOfTraps:
+            trapColumn = random.randrange(0, bounds)
+            trapRow = random.randrange(0, bounds)
+            self.addTrap(trapRow, trapColumn, trapNumber)
+        while len(self.terrainLocations) <= numberOfTerrains:
+            terrainColumn = random.randrange(0, bounds)
+            terrainRow = random.randrange(0, bounds)
+            self.addImpassableTerrain(terrainRow, terrainColumn, terrainNumber)
+        
+    def clearEnvironment(self) -> None:
+        """
+        Clears all data on previous traps and walls locations, removes all traps and terrain
+        """
+        while len(self.trapLocations) > 0:
+            trapLocation = self.trapLocations.pop()[1]
+            trapRow = trapLocation[0]
+            trapColumn = trapLocation[1]
+            self.setEmpty(trapRow, trapColumn)
+        while len(self.terrainLocations) > 0:
+            terrainLocation = self.terrainLocations.pop()[1]
+            terrainRow = terrainLocation[0]
+            terrainColumn = terrainLocation[1]
+            self.setEmpty(terrainRow, terrainColumn)

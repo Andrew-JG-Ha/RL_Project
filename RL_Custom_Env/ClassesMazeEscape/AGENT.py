@@ -5,8 +5,8 @@ class AGENT(LOCATIONS):
     """
     This is the class defining the player's movement and points
     """
-    def __init__(self, field_size, windowsWidth, windowsHeight, map, startRow = None, startColumn = None) -> None:
-        super().__init__(field_size, windowsWidth, windowsHeight)
+    def __init__(self, fieldSize, windowsWidth, windowsHeight, map, startRow = None, startColumn = None) -> None:
+        super().__init__(fieldSize, windowsWidth, windowsHeight)
         self.currentEntityName = "player"
         self.setMap(map)
         if (startColumn is not None and startRow is not None):
@@ -66,7 +66,7 @@ class AGENT(LOCATIONS):
                 # Can move onto a trap but deduction in points
                 self.totalReward -= 25
                 # Traps will have unique abilities - to be added
-                return False
+                return True
             elif (self.isWall(row, column)):
                 self.totalReward -= 100
                 return False
@@ -97,6 +97,8 @@ class AGENT(LOCATIONS):
             return True
         elif (entityOnCell == 'blockade'):
             return True
+        elif (entityOnCell == 'mountain'):
+            return True
         else:
             return False
 
@@ -105,7 +107,11 @@ class AGENT(LOCATIONS):
         Checks if this current cell is a trap, and returns penalty
         """
         entityOnCell = self.getEntity(row, column)
-        if (entityOnCell == 'ditch'):
+        if (entityOnCell == 'hole'):
+            return True
+        elif (entityOnCell == 'spikeTrap'):
+            return True
+        elif (entityOnCell == 'glue'):
             return True
         else:
             return False
@@ -122,7 +128,7 @@ class AGENT(LOCATIONS):
 
     def restartPlayer(self):
         """
-        Sets the player to the starting cell and resets all scoring
+        Sets the player to the starting cell and resets all scoring and logs
         """
         self.totalReward = 0
         self.actionLog.clear()

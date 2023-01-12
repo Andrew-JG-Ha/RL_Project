@@ -1,9 +1,10 @@
 import pygame
 import numpy as np
-import sys
+import os
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 from ClassesMazeEscape.AGENT import AGENT
-from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT
+from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT, trapList, terrainList, bonusList
+
 """
 1. Create the environment, 5x5 (scalable maze, code it so that it can be as large as I want) maze with obstacles and rewards
 2. General class for the player agent (can eventually lead to enemies?)
@@ -19,7 +20,6 @@ from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT
     - Traps: Deduction in moves or points
     - Trophy: +10 points
 """
-
 # COLORS
 black = (0,0,0)
 white = (255,255,255)
@@ -29,7 +29,22 @@ blue = (0,0,255)
 windowsWidth = 1280
 windowsHeight = 720
 
-def generate_environment(gameDisplay, seed=0, field_size=5):
+# PYGAME WINDOW INITIALIZATION AND IMAGE LOADING
+pygame.init()
+gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))
+coinImg = pygame.image.load("RL_Custom_Env\GameImages\coin.png")
+emptyImg = pygame.image.load("RL_Custom_Env\GameImages\empty.png")
+glueImg = pygame.image.load("RL_Custom_Env\GameImages\glue.png")
+holeImg = pygame.image.load("RL_Custom_Env\GameImages\hole.png")
+mountainImg = pygame.image.load("RL_Custom_Env\GameImages\mountain.png")
+playerImg = pygame.image.load("RL_Custom_Env\GameImages\player.png")
+spikeTrapImg = pygame.image.load("RL_Custom_Env\GameImages\spikeTrap.png")
+cupImg = pygame.image.load("RL_Custom_Env\GameImages\cup.png")
+wallImg = pygame.image.load("RL_Custom_Env\GameImages\wall.png")
+endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
+playerEndImg = pygame.image.load("RL_Custom_Env\GameImages\playerEnd.png")
+
+def generate_blank_environment(gameDisplay, field_size=5):
     """
     Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
     assigns:
@@ -44,7 +59,6 @@ def generate_environment(gameDisplay, seed=0, field_size=5):
      [1, 1, 1]
      [1, 1, 1]]
     """
-    gameDisplay.fill(white)
     create_grid(gameDisplay, field_size)
     
 def create_grid(gameDisplay, field_size=5):
@@ -57,35 +71,80 @@ def create_grid(gameDisplay, field_size=5):
         pygame.draw.line(gameDisplay, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), windowsHeight), width=2) # draw vertical lines
         pygame.draw.line(gameDisplay, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
 
-def main():
-    pygame.init()
-    running = True
+def renderEnvironment(environment:type[ENVIRONMENT], fieldSize, windowsWidth, windowsHeight):
+    """
+    Loads and places the images onto the board 
+    """
+    widthScaleFactor = windowsWidth/fieldSize
+    heightScaleFactor = windowsHeight/fieldSize
+    bounds = fieldSize
+    map = environment.getMap()
+    for row in range(0, bounds):
+        for column in range(0, bounds):
+            entityType = environment.getEntity(row, column)
+            imageYPos = map[row][column]['y_pos']
+            imageXPos = map[row][column]['x_pos']
+            entityImage = getImage(entityType)
+            if (environment.getFieldEffect(row, column) == 'end'):
+                if (entityType == 'player'):
+                    entityImage = playerEndImg
+                else:
+                    entityImage = endImg
+            entityImage = pygame.transform.scale(entityImage, (widthScaleFactor, heightScaleFactor))
+            gameDisplay.blit(entityImage, (imageXPos, imageYPos))
 
+def getImage(entityName):
+    """
+    Gets and returns the corresponding instance of the image (one-hot encoding)
+    """
+    if (entityName == 'coin'):
+        return coinImg
+    elif (entityName == 'glue'):
+        return glueImg
+    elif (entityName == 'hole'):
+        return holeImg
+    elif (entityName == 'mountain'):
+        return mountainImg
+    elif (entityName == 'player'):
+        return playerImg
+    elif (entityName == 'spikeTrap'):
+        return spikeTrapImg
+    elif (entityName == 'trophy'):
+        return cupImg
+    elif (entityName == 'wall'):
+        return wallImg
+    else:
+        return emptyImg
+
+def main():
+    running = True
     fieldSize = 7
 
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
-    map.showBoard()
 
-    while running:
-        action = input("please enter an action: ")
-        if (action == 'left' or action == 'right' or action == 'up' or action == 'down'):
-            myAgent.move(action)
-            map.showBoard()
-        else:
-            break
-
-    gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))
-    
     pygame.display.set_caption("Maze Escape")
     while running:
-        generate_environment(gameDisplay, seed=0, field_size=fieldSize)
+        renderEnvironment(environment, fieldSize, windowsWidth, windowsHeight)
+        generate_blank_environment(gameDisplay, seed=0, field_size=fieldSize)
         pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    myAgent.move('down')
+                if event.key == pygame.K_UP:
+                    myAgent.move('up')
+                if event.key == pygame.K_RIGHT:
+                    myAgent.move('right')
+                if event.key == pygame.K_LEFT:
+                    myAgent.move('left')
+
+        if (myAgent.isCurrentEnd()):
+
     pygame.quit()
 
 if __name__ == "__main__":

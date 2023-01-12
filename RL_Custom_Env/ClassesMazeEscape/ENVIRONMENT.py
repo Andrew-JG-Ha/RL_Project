@@ -2,8 +2,8 @@ from ClassesMazeEscape.LOCATIONS import LOCATIONS
 import random
 
 trapList = ['hole', 'spikeTrap', 'glue']
-terrainList = ['wall', 'mountain', 'blockade']
-bonusList = ['trophy', 'treasure']
+terrainList = ['wall', 'mountain']
+bonusList = ['trophy', 'coin']
 
 class ENVIRONMENT(LOCATIONS):
     """

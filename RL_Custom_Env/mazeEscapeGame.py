@@ -43,7 +43,6 @@ spikeTrapImg = pygame.image.load("RL_Custom_Env\GameImages\spikeTrap.png")
 cupImg = pygame.image.load("RL_Custom_Env\GameImages\cup.png")
 wallImg = pygame.image.load("RL_Custom_Env\GameImages\wall.png")
 endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
-playerEndImg = pygame.image.load("RL_Custom_Env\GameImages\playerEnd.png")
 
 def generate_blank_environment(gameDisplay, field_size=5):
     """
@@ -87,10 +86,7 @@ def renderEnvironment(environment:type[ENVIRONMENT], fieldSize, windowsWidth, wi
             imageXPos = map[row][column]['x_pos']
             entityImage = getImage(entityType)
             if (environment.getFieldEffect(row, column) == 'end'):
-                if (entityType == 'player'):
-                    entityImage = playerEndImg
-                else:
-                    entityImage = endImg
+                entityImage = endImg
             entityImage = pygame.transform.scale(entityImage, (widthScaleFactor, heightScaleFactor))
             gameDisplay.blit(entityImage, (imageXPos, imageYPos))
 
@@ -117,10 +113,14 @@ def getImage(entityName):
     else:
         return emptyImg
 
-def regenerateEnvironment():
+def regenerateEnvironment(environment, agent, fieldSize):
     """
     Randomizes the map and resets the players 
     """
+    environment.clearEnvironment()
+    environment.remakeMap()
+    environment.initiateEnvironment(fieldSize, fieldSize)
+    agent.restartPlayer()
 
 def main():
     render = True
@@ -154,10 +154,7 @@ def main():
 
             if (myAgent.isCurrentEnd() and continuous == True):
                 myAgent.printLog()
-                environment.clearEnvironment()
-                map.remakeMap()
-                environment.initiateEnvironment(fieldSize, fieldSize)
-                myAgent.restartPlayer()
+                regenerateEnvironment(environment, myAgent, fieldSize)
 
             elif (myAgent.isCurrentEnd() and continuous == False):
                 break

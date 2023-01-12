@@ -28,10 +28,11 @@ blue = (0,0,255)
 # RESOLUTION
 windowsWidth = 1280
 windowsHeight = 720
+textAreaHeight = 80
 
 # PYGAME WINDOW INITIALIZATION AND IMAGE LOADING
 pygame.init()
-gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight))
+gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight+textAreaHeight))
 coinImg = pygame.image.load("RL_Custom_Env\GameImages\coin.png")
 emptyImg = pygame.image.load("RL_Custom_Env\GameImages\empty.png")
 glueImg = pygame.image.load("RL_Custom_Env\GameImages\glue.png")
@@ -109,43 +110,57 @@ def getImage(entityName):
         return playerImg
     elif (entityName == 'spikeTrap'):
         return spikeTrapImg
-    elif (entityName == 'trophy'):
+    elif (entityName == 'cup'):
         return cupImg
     elif (entityName == 'wall'):
         return wallImg
     else:
         return emptyImg
 
+def regenerateEnvironment():
+    """
+    Randomizes the map and resets the players 
+    """
+
 def main():
+    render = True
+    continuous = True
+
     running = True
-    fieldSize = 7
+    fieldSize = 5
 
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
 
     pygame.display.set_caption("Maze Escape")
-    while running:
-        renderEnvironment(environment, fieldSize, windowsWidth, windowsHeight)
-        generate_blank_environment(gameDisplay, seed=0, field_size=fieldSize)
-        pygame.display.update()
+    if (render == True):
+        while running:
+            renderEnvironment(environment, fieldSize, windowsWidth, windowsHeight)
+            generate_blank_environment(gameDisplay, field_size=fieldSize)
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        myAgent.move('down')
+                    if event.key == pygame.K_UP:
+                        myAgent.move('up')
+                    if event.key == pygame.K_RIGHT:
+                        myAgent.move('right')
+                    if event.key == pygame.K_LEFT:
+                        myAgent.move('left')
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    myAgent.move('down')
-                if event.key == pygame.K_UP:
-                    myAgent.move('up')
-                if event.key == pygame.K_RIGHT:
-                    myAgent.move('right')
-                if event.key == pygame.K_LEFT:
-                    myAgent.move('left')
+            if (myAgent.isCurrentEnd() and continuous == True):
+                myAgent.printLog()
+                environment.clearEnvironment()
+                map.remakeMap()
+                environment.initiateEnvironment(fieldSize, fieldSize)
+                myAgent.restartPlayer()
 
-        if (myAgent.isCurrentEnd()):
-
+            elif (myAgent.isCurrentEnd() and continuous == False):
+                break
     pygame.quit()
-
 if __name__ == "__main__":
     main()

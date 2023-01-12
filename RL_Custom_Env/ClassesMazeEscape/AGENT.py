@@ -70,6 +70,9 @@ class AGENT(LOCATIONS):
             elif (self.isWall(row, column)):
                 self.totalReward -= 100
                 return False
+            elif (self.isBonus(row, column)):
+                self.totalReward += 500
+                return True
             else:
                 # Is valid move, no deduction
                 return True
@@ -104,7 +107,7 @@ class AGENT(LOCATIONS):
 
     def isTrap(self, row, column) -> bool:
         """
-        Checks if this current cell is a trap, and returns penalty
+        Checks if this current cell is a trap
         """
         entityOnCell = self.getEntity(row, column)
         if (entityOnCell == 'hole'):
@@ -116,12 +119,26 @@ class AGENT(LOCATIONS):
         else:
             return False
 
+    def isBonus(self, row, column) -> bool:
+        """
+        Checks if this current cell is a bonus
+        """
+        entityOnCell = self.getEntity(row, column)
+        if (entityOnCell == 'coin'):
+            return True
+        elif (entityOnCell == 'cup'):
+            return True
+        else:
+            return False
+
     def isCurrentEnd(self) -> bool:
         """
         Checks to see if the player's current cell is the end cell
         """
         fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
         if (fieldEffect == "end"):
+            self.totalReward += 1000
+            self.totalReward -= len(self.actionLog)*10
             return True
         else:
             return False
@@ -132,7 +149,12 @@ class AGENT(LOCATIONS):
         """
         self.totalReward = 0
         self.actionLog.clear()
-        previousColumn = self.currentColumn
-        previousRow = self.currentRow
         self.currentRow, self.currentColumn = self.getStart()
-        self.updateEntityLocation(previousRow, previousColumn, self.currentRow, self.currentColumn)
+        self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
+
+    def getScore(self):
+        return self.totalReward
+
+    def printLog(self):
+        print("Total Actions: {}".format(len(self.actionLog)))
+        print("Total Score: {}".format(self.totalReward))

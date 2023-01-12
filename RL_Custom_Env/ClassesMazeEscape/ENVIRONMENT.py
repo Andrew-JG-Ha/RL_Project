@@ -1,9 +1,10 @@
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 import random
+import math
 
 trapList = ['hole', 'spikeTrap', 'glue']
 terrainList = ['wall', 'mountain']
-bonusList = ['trophy', 'coin']
+bonusList = ['cup', 'coin']
 
 class ENVIRONMENT(LOCATIONS):
     """
@@ -17,7 +18,7 @@ class ENVIRONMENT(LOCATIONS):
         self.trapLocations = list()
         self.bonusLocations = list()
         if (isTraps):
-            numberOfTraps = fieldSize + 1
+            numberOfTraps =  fieldSize + 1
         else:
             numberOfTraps = 0
         if (isTerrain):
@@ -59,23 +60,23 @@ class ENVIRONMENT(LOCATIONS):
         """
         bounds = self.fieldSize - 1
         if (trapType == None):
-            trapNumber = random.randrange(0, len(trapList) - 1)
+            trapNumber = random.randrange(0, len(trapList))
         else:
             trapNumber = trapType
         if (terrainType == None):
-            terrainNumber = random.randrange(0, len(terrainList) - 1)
+            terrainNumber = random.randrange(0, len(terrainList))
         else:
             terrainNumber = terrainType
         if (bonusType == None):
-            bonusNumber = random.randrange(0, len(bonusList) - 1)
+            bonusNumber = random.randrange(0, len(bonusList))
         else:
             bonusNumber = bonusType
-        while len(self.trapLocations) < numberOfTraps:
+        while len(self.trapLocations) < math.ceil(math.pow(numberOfTraps, 2)/5):
             trapColumn = random.randrange(0, bounds)
             trapRow = random.randrange(0, bounds)
             self.addTrap(trapRow, trapColumn, trapNumber)
 
-        while len(self.terrainLocations) < numberOfTerrains:
+        while len(self.terrainLocations) < math.ceil(math.pow(numberOfTerrains, 2)/5):
             terrainColumn = random.randrange(0, bounds)
             terrainRow = random.randrange(0, bounds)
             self.addImpassableTerrain(terrainRow, terrainColumn, terrainNumber)

@@ -44,7 +44,11 @@ cupImg = pygame.image.load("RL_Custom_Env\GameImages\cup.png")
 wallImg = pygame.image.load("RL_Custom_Env\GameImages\wall.png")
 endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
 
-def generate_blank_environment(gameDisplay, field_size=5):
+# FONT
+courierNew = pygame.font.SysFont('couriernew', 30, True, False)
+
+
+def generate_blank_environment(field_size=5):
     """
     Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
     assigns:
@@ -59,6 +63,7 @@ def generate_blank_environment(gameDisplay, field_size=5):
      [1, 1, 1]
      [1, 1, 1]]
     """
+    gameDisplay.fill(white, rect = (0, windowsHeight, windowsWidth, windowsHeight+textAreaHeight))
     create_grid(gameDisplay, field_size)
     
 def create_grid(gameDisplay, field_size=5):
@@ -70,6 +75,8 @@ def create_grid(gameDisplay, field_size=5):
     for partition_number in range(1, field_size):
         pygame.draw.line(gameDisplay, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), windowsHeight), width=2) # draw vertical lines
         pygame.draw.line(gameDisplay, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
+    pygame.draw.line(gameDisplay, black, start_pos=(0, windowsHeight), end_pos=(windowsWidth, windowsHeight), width=5)
+
 
 def renderEnvironment(environment:type[ENVIRONMENT], fieldSize, windowsWidth, windowsHeight):
     """
@@ -122,6 +129,17 @@ def regenerateEnvironment(environment, agent, fieldSize):
     environment.initiateEnvironment(fieldSize, fieldSize)
     agent.restartPlayer()
 
+def putText(inputText:type[str], location):
+    """
+    Places inputText at centered at location
+    """
+    text = courierNew.render(inputText, True, black, white)
+    textRectangle = text.get_rect()
+    textCenter = textRectangle.center
+    locationX = location[0] - textCenter[0]
+    locationY = location[1] - textCenter[1]
+    gameDisplay.blit(text, (locationX, locationY))
+
 def main():
     render = True
     continuous = True
@@ -135,9 +153,11 @@ def main():
 
     pygame.display.set_caption("Maze Escape")
     if (render == True):
+        round = 0
         while running:
             renderEnvironment(environment, fieldSize, windowsWidth, windowsHeight)
-            generate_blank_environment(gameDisplay, field_size=fieldSize)
+            generate_blank_environment(field_size=fieldSize)
+            putText("Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -153,7 +173,7 @@ def main():
                         myAgent.move('left')
 
             if (myAgent.isCurrentEnd() and continuous == True):
-                myAgent.printLog()
+                round += 1
                 regenerateEnvironment(environment, myAgent, fieldSize)
 
             elif (myAgent.isCurrentEnd() and continuous == False):

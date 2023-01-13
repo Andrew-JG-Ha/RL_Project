@@ -22,27 +22,28 @@ class AGENT(LOCATIONS):
         if (action == 'left'):
             newColumn = self.currentColumn - 1
             if (self.isMoveValid(self.currentRow, newColumn) == True):
+                self.totalReward -= 10
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
-
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
             if (self.isMoveValid(self.currentRow, newColumn) == True):
+                self.totalReward -= 10
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
-
         elif (action == 'up'):
             newRow = self.currentRow - 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
+                self.totalReward -= 10
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
-
         elif (action == 'down'):
             newRow = self.currentRow + 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
+                self.totalReward -= 10
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
@@ -138,7 +139,6 @@ class AGENT(LOCATIONS):
         fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
         if (fieldEffect == "end"):
             self.totalReward += 1000
-            self.totalReward -= len(self.actionLog)*10
             return True
         else:
             return False

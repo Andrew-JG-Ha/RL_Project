@@ -33,7 +33,7 @@ class mazeEscape(Env):
         super().__init__()
 
     def step(self, action):
-        
+        action
         pass
 
     def render(self):

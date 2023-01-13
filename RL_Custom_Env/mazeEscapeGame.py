@@ -127,7 +127,7 @@ def main():
     continuous = True
 
     running = True
-    fieldSize = 5
+    fieldSize = 10
 
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())

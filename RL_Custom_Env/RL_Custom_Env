@@ -33,6 +33,9 @@ class mazeEscape(Env):
         super().__init__()
 
     def step(self, action):
+        """
+        Take an action from the action space and have the RL model apply it to the board
+        """
         action
         pass
 

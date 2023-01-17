@@ -40,7 +40,14 @@ class mazeEscape(Env):
         pass
 
     def render(self):
+        """
+        Render and show the current state of the game, where the agent's at and what the current map looks like
+        """
+
         pass
 
     def reset(self):
+        """
+        Resets the agent to the start and resets the map
+        """
         pass

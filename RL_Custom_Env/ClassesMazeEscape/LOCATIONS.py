@@ -37,10 +37,16 @@ class LOCATIONS:
 
     def getStart(self):
         """
-        Get the start coordinates
+        Returns the start coordinates
         """
         startCoords = np.argwhere(self.map['fieldEffect'] == 'start')[0]
         return startCoords[0], startCoords[1]
+
+    def getFieldSize(self):
+        """
+        Returns the fieldSize
+        """
+        return self.fieldSize
 
     def setMap(self, map):
         """
@@ -168,10 +174,8 @@ def initializeLocations(fieldSize, windowsWidth, windowsHeight):
     initialDS = np.zeros((fieldSize, fieldSize), dtype=[('entity', '<U20'), ('x_pos', '<i8'), ('y_pos', '<i8'), ('fieldEffect', '<U20')])
     partitionWidth = int(windowsWidth/fieldSize)
     partitionHeight = int(windowsHeight/fieldSize)
-    # partitionWidthHalved = int(partitionWidth/2)
-    # partitionHeightHalved = int(partitionHeight/2)
     for partitionNumberX in range(0, fieldSize):
         for partitionNumberY in range(0, fieldSize):
-            initialDS[partitionNumberY][partitionNumberX]['x_pos'] = partitionNumberX*partitionWidth #+ partitionWidthHalved
-            initialDS[partitionNumberY][partitionNumberX]['y_pos'] =  + partitionNumberY*partitionHeight #+ partitionHeightHalved
+            initialDS[partitionNumberY][partitionNumberX]['x_pos'] = partitionNumberX*partitionWidth 
+            initialDS[partitionNumberY][partitionNumberX]['y_pos'] =  + partitionNumberY*partitionHeight 
     return initialDS

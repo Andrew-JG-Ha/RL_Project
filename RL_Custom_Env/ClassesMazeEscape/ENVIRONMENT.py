@@ -1,4 +1,5 @@
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
+from ClassesMazeEscape.DEQUE import DEQUE
 import random
 import math
 
@@ -105,3 +106,19 @@ class ENVIRONMENT(LOCATIONS):
             bonusRow = bonusLocation[0]
             bonusColumn = bonusLocation[1]
             self.setEmpty(bonusRow, bonusColumn)
+
+    def minPathFinder(self) -> bool:
+        """
+        This uses the breadth-first search algorithm to find the minimum path from start to end
+        """
+        startRow, startColumn = self.getStart()
+        queue = DEQUE()
+        queue.enqueue((startRow, startColumn, 0))
+        directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+        visited = [[False] * self.fieldSize for _ in range(self.fieldSize)]
+
+        while queue.length != 0:
+            coord = queue.dequeue()
+            visited[coord[0]][coord[1]] = True
+
+            if (self.getEntity(coord[0], coord[1]) == 'end'):

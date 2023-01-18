@@ -87,6 +87,12 @@ class ENVIRONMENT(LOCATIONS):
             bonusRow = random.randrange(0, bounds)
             self.addBonus(bonusRow, bonusColumn, bonusNumber)
         
+        print(self.minPathFinder())
+        if (self.minPathFinder() == None):
+            self.clearEnvironment()
+            self.initiateEnvironment(numberOfTerrains, numberOfTraps, numberOfBonuses, trapType, terrainType, bonusType)
+
+
     def clearEnvironment(self) -> None:
         """
         Clears all data on previous traps and walls locations, removes all traps and terrain
@@ -121,4 +127,22 @@ class ENVIRONMENT(LOCATIONS):
             coord = queue.dequeue()
             visited[coord[0]][coord[1]] = True
 
-            if (self.getEntity(coord[0], coord[1]) == 'end'):
+            if (self.getFieldEffect(coord[0], coord[1]) == 'end'):
+                # end was reached, so return the shortest length to the end
+                return coord[2]
+            
+            for dir in directions:
+                newRow = coord[0] + dir[0]
+                newColumn = coord[1] + dir[1]
+                if newRow < 0 or newRow >= self.fieldSize or newColumn < 0 or newColumn >= self.fieldSize or visited[newRow][newColumn]:
+                    continue
+                else:
+                    if (self.getEntity(newRow, newColumn) in terrainList):
+                        continue
+                queue.enqueue((newRow, newColumn, coord[2] + 1))
+
+
+
+
+
+            

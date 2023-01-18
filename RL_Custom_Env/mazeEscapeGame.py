@@ -151,6 +151,7 @@ def main():
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
 
+
     pygame.display.set_caption("Maze Escape")
     if (render == True):
         round = 0

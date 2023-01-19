@@ -87,7 +87,6 @@ class ENVIRONMENT(LOCATIONS):
             bonusRow = random.randrange(0, bounds)
             self.addBonus(bonusRow, bonusColumn, bonusNumber)
         
-        print(self.minPathFinder())
         if (self.minPathFinder() == None):
             self.clearEnvironment()
             self.initiateEnvironment(numberOfTerrains, numberOfTraps, numberOfBonuses, trapType, terrainType, bonusType)
@@ -140,9 +139,3 @@ class ENVIRONMENT(LOCATIONS):
                     if (self.getEntity(newRow, newColumn) in terrainList):
                         continue
                 queue.enqueue((newRow, newColumn, coord[2] + 1))
-
-
-
-
-
-            

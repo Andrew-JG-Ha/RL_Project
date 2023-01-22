@@ -27,9 +27,10 @@ To escape a 5x5 hex maze, agent starts on one hex, and must avoid obstacles to f
 action_space: can move left, right, up, down
 """
 class mazeEscape(Env):
-    def __init__(self) -> None:
-        self.action_space = Discrete(4)
-        self.observation_space = 
+    metadata = {"render_modes": ["human"], "render_fps":5}
+    def __init__(self, render_mode = None, fieldSize = 8, map = None) -> None:
+        self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
+        self.observation_space = # current location on the board
         super().__init__()
 
     def step(self, action):

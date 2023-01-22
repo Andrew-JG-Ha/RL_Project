@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+import pickle as pkl
 import os
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 from ClassesMazeEscape.AGENT import AGENT
@@ -140,17 +141,24 @@ def putText(inputText:type[str], location):
     locationY = location[1] - textCenter[1]
     gameDisplay.blit(text, (locationX, locationY))
 
+def createEmptyMap(fieldSize = 8):
+    """
+    Creates and returns an empty map with no terrain or traps
+    """
+    newMap = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
+    emptyMap = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, newMap.getMap())
+    emptyMap.clearEnvironment()
+    return emptyMap.getMap()
+
 def main():
     render = True
     continuous = True
 
     running = True
     fieldSize = 10
-
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
-
 
     pygame.display.set_caption("Maze Escape")
     if (render == True):

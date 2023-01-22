@@ -153,8 +153,14 @@ class AGENT(LOCATIONS):
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 
     def getScore(self):
+        """
+        Returns the current score of the agent
+        """
         return self.totalReward
 
     def printLog(self):
+        """
+        Prints the actions taken and the total score
+        """
         print("Total Actions: {}".format(len(self.actionLog)))
         print("Total Score: {}".format(self.totalReward))

@@ -1,5 +1,6 @@
 # Import Gym Dependencies
 import gym
+import mazeEscapeGame
 from gym import Env
 from gym.spaces import Discrete, Box, Dict, Tuple, MultiBinary, MultiDiscrete
 
@@ -50,5 +51,17 @@ class mazeEscape(Env):
     def reset(self):
         """
         Resets the agent to the start and resets the map
+        """
+        pass
+
+    def play(self):
+        """
+        Allows the user to play the game
+        """
+        pass
+
+    def loadEnvironment(self):
+        """
+        Loads a specific environment from input map
         """
         pass

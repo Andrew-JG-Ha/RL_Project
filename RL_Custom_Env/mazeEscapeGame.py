@@ -150,17 +150,18 @@ def createEmptyMap(fieldSize = 8):
     emptyMap.clearEnvironment()
     return emptyMap.getMap()
 
-def main():
-    render = True
-    continuous = True
-
+def playGame(fieldSize = 10, render = True):
+    """
+    Play the game, it will be initialized to be in the state of a 10x10 square map
+    """
     running = True
-    fieldSize = 10
+
     map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
 
     pygame.display.set_caption("Maze Escape")
+
     if (render == True):
         round = 0
         while running:
@@ -181,12 +182,11 @@ def main():
                     if event.key == pygame.K_LEFT:
                         myAgent.move('left')
 
-            if (myAgent.isCurrentEnd() and continuous == True):
+            if (myAgent.isCurrentEnd()):
                 round += 1
                 regenerateEnvironment(environment, myAgent, fieldSize)
 
-            elif (myAgent.isCurrentEnd() and continuous == False):
+            elif (myAgent.isCurrentEnd()):
                 break
     pygame.quit()
-if __name__ == "__main__":
-    main()
+    

@@ -54,7 +54,7 @@ def initializePygame():
     pygame.display.set_caption("Maze Escape")
     return gameDisplay
 
-def generate_blank_environment(gameDisplay, field_size=5):
+def generateBlankEnvironment(gameDisplay, field_size=5):
     """
     Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
     assigns:
@@ -155,7 +155,7 @@ def createEmptyMap(fieldSize = 8):
     emptyMap.clearEnvironment()
     return emptyMap.getMap()
 
-def playGame(fieldSize = 10, render = True):
+def playGame(fieldSize = 10):
     """
     Allows the user to play the game, it will be initialized to be in the state of a 10x10 square map unless fieldSize is changed
     """
@@ -167,30 +167,29 @@ def playGame(fieldSize = 10, render = True):
 
     gameDisplay = initializePygame()
 
-    if (render == True):
-        round = 0
-        while running:
-            renderEnvironment(gameDisplay, environment, fieldSize, windowsWidth, windowsHeight)
-            generate_blank_environment(gameDisplay, field_size=fieldSize)
-            putText(gameDisplay, "Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
-            pygame.display.update()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        myAgent.move('down')
-                    if event.key == pygame.K_UP:
-                        myAgent.move('up')
-                    if event.key == pygame.K_RIGHT:
-                        myAgent.move('right')
-                    if event.key == pygame.K_LEFT:
-                        myAgent.move('left')
+    round = 0
+    while running:
+        renderEnvironment(gameDisplay, environment, fieldSize, windowsWidth, windowsHeight)
+        generateBlankEnvironment(gameDisplay, field_size=fieldSize)
+        putText(gameDisplay, "Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    myAgent.move('down')
+                if event.key == pygame.K_UP:
+                    myAgent.move('up')
+                if event.key == pygame.K_RIGHT:
+                    myAgent.move('right')
+                if event.key == pygame.K_LEFT:
+                    myAgent.move('left')
 
-            if (myAgent.isCurrentEnd()):
-                round += 1
-                regenerateEnvironment(environment, myAgent, fieldSize)
+        if (myAgent.isCurrentEnd()):
+            round += 1
+            regenerateEnvironment(environment, myAgent, fieldSize)
 
-            elif (myAgent.isCurrentEnd()):
-                break
+        elif (myAgent.isCurrentEnd()):
+            break
     pygame.quit()

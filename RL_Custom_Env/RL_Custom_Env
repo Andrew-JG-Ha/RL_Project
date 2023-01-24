@@ -34,6 +34,7 @@ action_space: can move left, right, up, down
 class mazeEscape(Env):
     # metadata = {"render_modes": ["human"], "render_fps":5}
     def __init__(self, render_mode = None, fieldSize = 8, map = None) -> None:
+        self.fieldSize = fieldSize
         self.windowsWidth = mazeEscapeGame.windowsWidth
         self.windowsHeight = mazeEscapeGame.windowsHeight
         self.textAreaHeight = mazeEscapeGame.textAreaHeight
@@ -47,13 +48,13 @@ class mazeEscape(Env):
         self.agent = AGENT(fieldSize, self.windowsWidth, self.windowsHeight, self.map)
 
         self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
-        self.observation_space = 4 # current location on the board
+        # self.observation_space = 4 # current location on the board
 
     def step(self, action):
         """
         Take an action from the action space and have the RL model apply it to the board
         """
-        
+        self.agent.move(action)
         pass
 
     def render(self, mode = "human"):
@@ -61,10 +62,13 @@ class mazeEscape(Env):
         Render and show the current state of the game, where the agent's at and what the current map looks like
         """
         # assert mode in ["human"], "Invalid mode, must be \"human\""
-        if mode == "human" and self.window == None:
+        if mode == "human" and self.gameDisplay == None:
             self.gameDisplay = mazeEscapeGame.initializePygame()
-            
-
+        
+        mazeEscapeGame.renderEnvironment(self.gameDisplay, self.environment, self.fieldSize, self.windowsWidth, self.windowsHeight)
+        mazeEscapeGame.generateBlankEnvironment(self.gameDisplay, self.fieldSize)
+        mazeEscapeGame.putText(self.gameDisplay, "Round:{}, Score:{}".format(round, self.agent.getScore()), (self.windowsWidth//2, self.windowsHeight+self.textAreaHeight//2))
+        pygame.display.update()
 
     def reset(self):
         """
@@ -78,8 +82,8 @@ class mazeEscape(Env):
         """
         mazeEscapeGame.playGame()
 
-    def loadEnvironment(self):
-        """
-        Loads a specific environment from input map
-        """
-        pass
+    # def loadEnvironment(self, map):
+    #     """
+    #     Loads a specific environment from input map
+    #     """
+    #     self.map = map

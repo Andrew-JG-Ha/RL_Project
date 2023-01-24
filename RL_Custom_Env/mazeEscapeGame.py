@@ -33,7 +33,6 @@ textAreaHeight = 80
 
 # PYGAME WINDOW INITIALIZATION AND IMAGE LOADING
 pygame.init()
-gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight+textAreaHeight))
 coinImg = pygame.image.load("RL_Custom_Env\GameImages\coin.png")
 emptyImg = pygame.image.load("RL_Custom_Env\GameImages\empty.png")
 glueImg = pygame.image.load("RL_Custom_Env\GameImages\glue.png")
@@ -48,8 +47,14 @@ endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
 # FONT
 courierNew = pygame.font.SysFont('couriernew', 30, True, False)
 
+def initializePygame():
+    pygame.init()
+    pygame.display.init()
+    gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight+textAreaHeight))
+    pygame.display.set_caption("Maze Escape")
+    return gameDisplay
 
-def generate_blank_environment(field_size=5):
+def generate_blank_environment(gameDisplay, field_size=5):
     """
     Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
     assigns:
@@ -79,7 +84,7 @@ def create_grid(gameDisplay, field_size=5):
     pygame.draw.line(gameDisplay, black, start_pos=(0, windowsHeight), end_pos=(windowsWidth, windowsHeight), width=5)
 
 
-def renderEnvironment(environment:type[ENVIRONMENT], fieldSize, windowsWidth, windowsHeight):
+def renderEnvironment(gameDisplay, environment:type[ENVIRONMENT], fieldSize, windowsWidth, windowsHeight):
     """
     Loads and places the images onto the board 
     """
@@ -130,7 +135,7 @@ def regenerateEnvironment(environment, agent, fieldSize):
     environment.initiateEnvironment(fieldSize, fieldSize)
     agent.restartPlayer()
 
-def putText(inputText:type[str], location):
+def putText(gameDisplay, inputText:type[str], location):
     """
     Places inputText at centered at location
     """
@@ -152,7 +157,7 @@ def createEmptyMap(fieldSize = 8):
 
 def playGame(fieldSize = 10, render = True):
     """
-    Play the game, it will be initialized to be in the state of a 10x10 square map
+    Allows the user to play the game, it will be initialized to be in the state of a 10x10 square map unless fieldSize is changed
     """
     running = True
 
@@ -160,14 +165,14 @@ def playGame(fieldSize = 10, render = True):
     environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
     myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
 
-    pygame.display.set_caption("Maze Escape")
+    gameDisplay = initializePygame()
 
     if (render == True):
         round = 0
         while running:
-            renderEnvironment(environment, fieldSize, windowsWidth, windowsHeight)
-            generate_blank_environment(field_size=fieldSize)
-            putText("Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
+            renderEnvironment(gameDisplay, environment, fieldSize, windowsWidth, windowsHeight)
+            generate_blank_environment(gameDisplay, field_size=fieldSize)
+            putText(gameDisplay, "Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -189,4 +194,3 @@ def playGame(fieldSize = 10, render = True):
             elif (myAgent.isCurrentEnd()):
                 break
     pygame.quit()
-    

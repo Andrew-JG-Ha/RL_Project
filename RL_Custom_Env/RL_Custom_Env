@@ -57,7 +57,11 @@ class mazeEscape(Env):
         Take an action from the action space and have the RL model apply it to the board
         """
         self.agent.move(action)
-        pass
+        # return observations
+        observation = (self.agent.currentRow, self.agent.currentColumn)
+        reward = self.agent.totalReward
+        done = self.agent.isCurrentEnd()
+        return 
 
     def render(self, mode = "human"):
         """

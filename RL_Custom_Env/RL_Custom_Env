@@ -55,9 +55,22 @@ class mazeEscape(Env):
     def step(self, action):
         """
         Take an action from the action space and have the RL model apply it to the board
+        Maps an integer value from 0->3 to a string action
+        0 -> up
+        1 -> down
+        2 -> left
+        3 -> right
         """
-        self.agent.move(action)
-        pass
+        takeAction = action
+        if action == 0:
+            takeAction = "up"
+        elif action == 1:
+            takeAction = "down"
+        elif action == 2:
+            takeAction = "left"
+        elif action == 3:
+            takeAction = "right"
+        self.agent.move(takeAction)
 
     def render(self, mode = "human"):
         """
@@ -91,3 +104,24 @@ class mazeEscape(Env):
 
     def close(self):
         pygame.quit()
+
+def mapAction(integerInput) -> str:
+
+    return possibleActions[integerInput]
+
+test = mazeEscape()
+test.render()
+test.step("right")
+test.render()
+time.sleep(4)
+test.step("up")
+test.render()
+time.sleep(4)
+
+action = test.action_space.sample()
+print("action:{}".format(action))
+test.step(action)
+test.render()
+time.sleep(3)
+
+test.close()

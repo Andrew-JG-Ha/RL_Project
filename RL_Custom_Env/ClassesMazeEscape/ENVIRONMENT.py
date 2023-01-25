@@ -91,7 +91,6 @@ class ENVIRONMENT(LOCATIONS):
             self.clearEnvironment()
             self.initiateEnvironment(numberOfTerrains, numberOfTraps, numberOfBonuses, trapType, terrainType, bonusType)
 
-
     def clearEnvironment(self) -> None:
         """
         Clears all data on previous traps and walls locations, removes all traps and terrain
@@ -139,3 +138,17 @@ class ENVIRONMENT(LOCATIONS):
                     if (self.getEntity(newRow, newColumn) in terrainList):
                         continue
                 queue.enqueue((newRow, newColumn, coord[2] + 1))
+
+    def initializeLocations(self) -> None:
+        """
+        Iterates through all the cells and keeps track of all locations of the entities on the map
+        """
+        for row in range(0, self.fieldSize):
+            for column in range(0, self.fieldSize):
+                entityAtCell = self.getEntity(row, column)
+                if entityAtCell in trapList:
+                    self.trapLocations.append((entityAtCell, (row, column)))
+                elif entityAtCell in terrainList:
+                    self.terrainLocations.append((entityAtCell, (row, column)))
+                elif entityAtCell in bonusList:
+                    self.bonusLocations.append((entityAtCell, (row, column)))

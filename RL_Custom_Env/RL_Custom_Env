@@ -1,6 +1,7 @@
 # Import Gym Dependencies
 import gym
 import pygame
+import time
 import mazeEscapeGame
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 from ClassesMazeEscape.AGENT import AGENT
@@ -46,6 +47,7 @@ class mazeEscape(Env):
             self.map = locations.getMap()
         self.environment = ENVIRONMENT(fieldSize, self.windowsWidth, self.windowsHeight, self.map)
         self.agent = AGENT(fieldSize, self.windowsWidth, self.windowsHeight, self.map)
+        self.initialMap = self.map.copy()
 
         self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
         # self.observation_space = 4 # current location on the board
@@ -67,14 +69,19 @@ class mazeEscape(Env):
         
         mazeEscapeGame.renderEnvironment(self.gameDisplay, self.environment, self.fieldSize, self.windowsWidth, self.windowsHeight)
         mazeEscapeGame.generateBlankEnvironment(self.gameDisplay, self.fieldSize)
-        mazeEscapeGame.putText(self.gameDisplay, "Round:{}, Score:{}".format(round, self.agent.getScore()), (self.windowsWidth//2, self.windowsHeight+self.textAreaHeight//2))
+        mazeEscapeGame.putText(self.gameDisplay, "Score:{}".format(self.agent.getScore()), (self.windowsWidth//2, self.windowsHeight+self.textAreaHeight//2))
         pygame.display.update()
 
     def reset(self):
         """
         Resets the agent to the start and resets the map
         """
-        pass
+        self.environment.clearEnvironment()
+        self.environment.setMap(self.initialMap.copy())
+        self.environment.initializeLocations()
+        self.agent.setMap(self.environment.getMap())
+        self.map = self.environment.getMap()
+        self.agent.restartPlayer()
 
     def play(self):
         """
@@ -82,8 +89,5 @@ class mazeEscape(Env):
         """
         mazeEscapeGame.playGame()
 
-    # def loadEnvironment(self, map):
-    #     """
-    #     Loads a specific environment from input map
-    #     """
-    #     self.map = map
+    def close(self):
+        pygame.quit()

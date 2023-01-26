@@ -71,6 +71,11 @@ class mazeEscape(Env):
         elif action == 3:
             takeAction = "right"
         self.agent.move(takeAction)
+        # return observations
+        observation = (self.agent.currentRow, self.agent.currentColumn)
+        reward = self.agent.totalReward
+        done = self.agent.isCurrentEnd()
+        return 
 
     def render(self, mode = "human"):
         """

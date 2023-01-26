@@ -62,7 +62,7 @@ def testing_model(model: type[PPO], environment, number_of_steps=10):
         print("Episode:{} Score:{}".format(step, score))
 
 def main():
-    learning = True
+    learning = False
     testing = True
     environment_name = "CartPole-v1"
     PPO_Path = os.path.join(os.path.dirname(__file__), "Training", "Models", "Model_" + environment_name)
@@ -71,6 +71,9 @@ def main():
 
     file_setup()
     environment = setup_environment(environment_name)
+    environment.reset()
+    testAction = environment.action_space.sample()
+    obs, reward, done, info = environment.step(testAction)
 
     if (learning):
         print("Training with PPO Model With Callback:")

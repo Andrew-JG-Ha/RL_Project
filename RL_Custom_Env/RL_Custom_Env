@@ -43,8 +43,8 @@ class mazeEscape(Env):
 
         self.state = (self.agent.currentRow, self.agent.currentColumn)
 
-        self.maxSteps = fieldSize*3
-
+        self.maxSteps = fieldSize*4
+        
         self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
         self.observation_space = Tuple((Discrete(fieldSize), Discrete(fieldSize))) # current location on the board
 
@@ -52,21 +52,17 @@ class mazeEscape(Env):
         """
         Take an action from the action space and have the RL model apply it to the board
         """
+        previousTotalReward = self.agent.totalReward
         self.agent.move(mapAction(action))
-
         self.state = (self.agent.currentRow, self.agent.currentColumn)
-
         if self.agent.isCurrentEnd() or self.maxSteps <= 0:
             done = True
         else:
             done = False
-
         info = {} # for passing additional information if need be
-
-        reward = self.agent.totalReward
+        reward = self.agent.totalReward - previousTotalReward
 
         self.maxSteps -= 1
-
         return self.state, reward, done, info
 
     def render(self, mode = "human"):
@@ -84,7 +80,7 @@ class mazeEscape(Env):
         """
         Resets the agent to the start and resets the map
         """
-        self.maxSteps = self.fieldSize*3
+        self.maxSteps = self.fieldSize*4
         self.environment.clearEnvironment()
         self.environment.setMap(self.initialMap.copy())
         self.environment.initializeLocations()
@@ -101,7 +97,11 @@ class mazeEscape(Env):
         mazeEscapeGame.playGame()
 
     def close(self):
+        """
+        Close the pygame environment
+        """
         pygame.quit()
+
 
 def mapAction(action) -> str:
     """
@@ -124,16 +124,16 @@ def mapAction(action) -> str:
 
 test = mazeEscape()
 episodes = 3
+
 for episode in range(0, episodes):
     obs = test.reset()
     done = False
     score = 0
-
     while not done:
         test.render()
-        time.sleep(0.1)
         action = test.action_space.sample()
         obs, reward, done, info = test.step(action)
+        time.sleep(0.1)
         score += reward
     print("Episode:{}, Score:{}".format(episode, score))
 test.close()

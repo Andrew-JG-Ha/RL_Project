@@ -102,7 +102,7 @@ class mazeEscape(Env):
         """
         pygame.quit()
 
-
+# Helper Functions
 def mapAction(action) -> str:
     """
     Maps an integer value from 0->3 to a string action
@@ -123,7 +123,7 @@ def mapAction(action) -> str:
         return action
 
 test = mazeEscape()
-episodes = 3
+episodes = 10
 
 for episode in range(0, episodes):
     obs = test.reset()

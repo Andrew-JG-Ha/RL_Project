@@ -122,7 +122,7 @@ def mapAction(action) -> str:
     else:
         return action
 
-test = mazeEscape()
+test = mazeEscape(15)
 episodes = 10
 
 for episode in range(0, episodes):

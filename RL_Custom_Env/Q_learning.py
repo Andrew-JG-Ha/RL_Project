@@ -13,6 +13,7 @@ def Q_learn():
 def epsilon_greedy_policy():
     """
     epsilon-greedy-policy
+    the function to determine if the agent will explore or exploit previous traning data
     """
     epsilon = 0.5
     pass

@@ -14,6 +14,7 @@ def epsilon_greedy_policy():
     """
     epsilon-greedy-policy
     the function to determine if the agent will explore or exploit previous traning data
+    this function requires randomness to choose between exploitation and exploration
     """
     epsilon = 0.5
     

@@ -1,5 +1,4 @@
 # Import Gym Dependencies
-import gym
 import pygame
 import time
 import mazeEscapeGame
@@ -11,8 +10,6 @@ from gym.spaces import Discrete, Tuple
 
 # Importing Helper Libraries
 import numpy as np
-import random
-import os
 
 # Importing Stable-Baselines3 Stuff
 from stable_baselines3 import ppo
@@ -42,11 +39,13 @@ class mazeEscape(Env):
         self.initialMap = self.map.copy()
 
         self.state = (self.agent.currentRow, self.agent.currentColumn)
-
         self.maxSteps = fieldSize*4
         
         self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
         self.observation_space = Tuple((Discrete(fieldSize), Discrete(fieldSize))) # current location on the board
+
+        self.observation_space.high = fieldSize
+        self.observation_space.low = 0
 
     def step(self, action):
         """
@@ -124,6 +123,8 @@ def mapAction(action) -> str:
 
 test = mazeEscape(5)
 episodes = 10
+
+print(test.observation_space.high)
 
 for episode in range(0, episodes):
     obs = test.reset()

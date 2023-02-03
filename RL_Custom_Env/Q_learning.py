@@ -7,7 +7,7 @@ def Q_learn(state, action):
     """
     alpha = 0.5
     gamma = 0.5
-    Q_value
+    Q_value = Q_old(state, action) + alpha(r_t + gamma*maxarg(state_t+1, action) - Q_old(state, action))
     return Q_value
 
 def epsilon_greedy_policy():

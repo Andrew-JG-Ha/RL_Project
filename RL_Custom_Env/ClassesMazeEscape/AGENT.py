@@ -15,12 +15,16 @@ class AGENT(LOCATIONS):
         else:
             self.currentRow, self.currentColumn = self.getStart()
 
-        self.previousLocation = (self.currentRow.copy(), self.currentColumn.copy())
-        self.repeatVisit = 1
-
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
+
+        self.minReward = -0.5 * self.getMap().size
         self.totalReward = 0
+        
         self.actionLog = list()
+        self.visited = set()
+        self.visited.add((self.currentRow, self.currentColumn))
+
+        self.validActions = {"up":0, "down":1, "left":2, "right":3}
 
     def move(self, action):
         if (action == 'left'):
@@ -29,39 +33,28 @@ class AGENT(LOCATIONS):
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
-                if ((self.currentRow, self.currentColumn) == self.previousLocation):
-                    self.totalReward -= 300
-                self.previousLocation = (self.currentRow.copy(), previousColumn.copy())
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
             if (self.isMoveValid(self.currentRow, newColumn) == True):
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
-                if ((self.currentRow, self.currentColumn) == self.previousLocation):
-                    self.totalReward -= 300
-                self.previousLocation = (self.currentRow.copy(), previousColumn.copy())
         elif (action == 'up'):
             newRow = self.currentRow - 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
-                if ((self.currentRow, self.currentColumn) == self.previousLocation):
-                    self.totalReward -= 300
-                self.previousLocation = (previousRow.copy(), self.currentColumn.copy())
         elif (action == 'down'):
             newRow = self.currentRow + 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
-                if ((self.currentRow, self.currentColumn) == self.previousLocation):
-                    self.totalReward -= 300
-                self.previousLocation = (previousRow.copy(), self.currentColumn.copy())
         else:
             pass
             # stay at current cell
+        self.visited.add((self.currentRow, self.currentColumn))
         self.actionLog.append(action)
 
 
@@ -71,23 +64,23 @@ class AGENT(LOCATIONS):
         """
         if (self.isOutOfBounds(row, column)):
             # Remains on same cell
-            self.totalReward -= 250
+            self.totalReward += (self.minReward - 1)
             return False
         else:
             if (self.isTrap(row, column)):
-                # Action is dependent on the trap - will add later
-                # Can move onto a trap but deduction in points
-                self.totalReward -= 10
-                # Traps will have unique abilities - to be added
+                self.totalReward -= 0.15
                 return True
-            elif (self.isWall(row, column)):
-                self.totalReward -= 250
+            if (self.isWall(row, column)):
+                self.totalReward -= 0.75
                 return False
-            elif (self.isBonus(row, column)):
-                self.totalReward += 1000
+            if (self.isBonus(row, column)):
+                self.totalReward += 5
+                return True
+            if ((row, column) in self.visited):
+                self.totalReward -=0.25
                 return True
             else:
-                # Is valid move, no deduction
+                self.totalReward -=0.05
                 return True
 
     def isOutOfBounds(self, row, column) -> bool:
@@ -150,7 +143,7 @@ class AGENT(LOCATIONS):
         """
         fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
         if (fieldEffect == "end"):
-            self.totalReward += 9999
+            self.totalReward += 10
             return True
         else:
             return False
@@ -161,6 +154,7 @@ class AGENT(LOCATIONS):
         """
         self.totalReward = 0
         self.actionLog.clear()
+        self.visited = set()
         self.currentRow, self.currentColumn = self.getStart()
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 

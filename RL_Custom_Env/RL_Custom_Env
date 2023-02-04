@@ -5,8 +5,6 @@ import mazeEscapeGame
 from ClassesMazeEscape.LOCATIONS import LOCATIONS
 from ClassesMazeEscape.AGENT import AGENT
 from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT
-from gym import Env
-from gym.spaces import Discrete, Tuple
 
 # Importing Helper Libraries
 import numpy as np
@@ -22,8 +20,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 To escape a 5x5 hex maze, agent starts on one hex, and must avoid obstacles to find the most optimized path to the end
 action_space: can move left, right, up, down
 """
-class mazeEscape(Env):
-    # metadata = {"render_modes": ["human"], "render_fps":5}
+class mazeEscape():
     def __init__(self, fieldSize = 8, map = None) -> None:
         self.fieldSize = fieldSize
         self.windowsWidth = mazeEscapeGame.windowsWidth
@@ -40,7 +37,7 @@ class mazeEscape(Env):
         self.initialMap = self.map.copy()
 
         self.state = (self.agent.currentRow, self.agent.currentColumn)
-        self.maxSteps = fieldSize*4
+        self.maxSteps = fieldSize*5
         
         self.action_space = Discrete(4) # 4 possible actions: up, down, left, right
         self.observation_space = Tuple((Discrete(fieldSize), Discrete(fieldSize))) # current location on the board
@@ -96,12 +93,6 @@ class mazeEscape(Env):
         """
         mazeEscapeGame.playGame()
 
-    def close(self):
-        """
-        Close the pygame environment
-        """
-        pygame.quit()
-
 # Helper Functions
 def mapAction(action) -> str:
     """
@@ -122,4 +113,26 @@ def mapAction(action) -> str:
     else:
         return action
 
+# myMap = LOCATIONS(6, 1280, 720).getMap()
+# myMap = ENVIRONMENT(6, 1280, 720, myMap, False, False).getMap()
 
+# myEnv = mazeEscape(6, myMap)
+
+test = mazeEscape(10)
+episodes = 4
+
+qTable = qTrain(test, 10000)
+
+for episode in range(0, episodes):
+    state = test.reset()
+    done = False
+    score = 0
+    while not done:
+        test.render()
+        action = np.argmax(qTable[state])
+        state, reward, done, info = test.step(action)
+        print("state:{}".format(state))
+        time.sleep(0.1)
+        score += reward
+    print("Episode:{}, Score:{}".format(episode, score))
+test.close()

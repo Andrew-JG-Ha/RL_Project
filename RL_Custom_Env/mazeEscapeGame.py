@@ -47,62 +47,131 @@ endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
 # FONT
 courierNew = pygame.font.SysFont('couriernew', 30, True, False)
 
-def initializePygame():
-    pygame.init()
-    pygame.display.init()
-    gameDisplay = pygame.display.set_mode((windowsWidth, windowsHeight+textAreaHeight))
-    pygame.display.set_caption("Maze Escape")
-    return gameDisplay
+class mazeEscape():
+    def __init__(self, _fieldSize = 8, _windowsWidth = windowsWidth, _windowsHeight = windowsHeight, _textAreaHeight = textAreaHeight) -> None:
+        self.gameDisplay = initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight)
 
-def generateBlankEnvironment(gameDisplay, field_size=5):
-    """
-    Generates the environment, creates the playing field, and randomly places obstacles and bonuses.
-    assigns:
-    - start location
-    - end location
-    - Walls
-    - Ditches
+        self.fieldSize = _fieldSize
+        self.windowsWidth = _windowsWidth
+        self.windowsHeight = _windowsHeight
+        self.textAreaHeight = _textAreaHeight
 
-    returns a data structure (numpy array of characters, where each character relates to the status of the cell) 
-    that contains the details on the placement of all obstacles, and the start and end locations
-    [[1, 1, 1]
-     [1, 1, 1]
-     [1, 1, 1]]
-    """
-    gameDisplay.fill(white, rect = (0, windowsHeight, windowsWidth, windowsHeight+textAreaHeight))
-    create_grid(gameDisplay, field_size)
-    
-def create_grid(gameDisplay, field_size=5):
-    """
-    Generates the grids onto the gameDisplay of the pygame window
-    """
-    partition_width = int(windowsWidth/field_size)
-    partition_height = int(windowsHeight/field_size)
-    for partition_number in range(1, field_size):
-        pygame.draw.line(gameDisplay, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), windowsHeight), width=2) # draw vertical lines
-        pygame.draw.line(gameDisplay, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
-    pygame.draw.line(gameDisplay, black, start_pos=(0, windowsHeight), end_pos=(windowsWidth, windowsHeight), width=5)
+        map = LOCATIONS(_fieldSize, _windowsWidth, _windowsHeight).getMap()
+        self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+        self.agent = AGENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+
+    def generateBlankDisplay(self) -> None:
+        """
+        Generates the blank display, creates the playing field
+        """
+        self.gameDisplay.fill(white, rect = (0, windowsHeight, windowsWidth, windowsHeight+textAreaHeight))
+        self.create_grid()
+        
+    def create_grid(self) -> None:
+        """
+        Generates the grids onto the gameDisplay of the pygame window
+        """
+        partition_width = int(self.windowsWidth/self.fieldSize)
+        partition_height = int(self.windowsHeight/self.fieldSize)
+        for partition_number in range(1, self.fieldSize):
+            pygame.draw.line(self.gameDisplay, black, start_pos=(int(partition_number*partition_width), 0), end_pos=(int(partition_number*partition_width), self.windowsHeight), width=2) # draw vertical lines
+            pygame.draw.line(self.gameDisplay, black, start_pos=(0, int(partition_number*partition_height)), end_pos=(self.windowsWidth, int(partition_number*partition_height)), width=2) # draw horizontal lines
+        pygame.draw.line(self.gameDisplay, black, start_pos=(0, self.windowsHeight), end_pos=(self.windowsWidth, self.windowsHeight), width=5)
+
+    def renderEnvironment(self) -> None:
+        """
+        Loads and places the images onto the board 
+        """
+        widthScaleFactor = self.windowsWidth/self.fieldSize
+        heightScaleFactor = self.windowsHeight/self.fieldSize
+        for row in range(0, self.fieldSize):
+            for column in range(0, self.fieldSize):
+                entityType = self.environment.getEntity(row, column)
+                imageYPos = self.environment.getMap()[row][column]['y_pos']
+                imageXPos = self.environment.getMap()[row][column]['x_pos']
+                entityImage = getImage(entityType)
+                if (self.environment.getFieldEffect(row, column) == 'end'):
+                    entityImage = endImg
+                entityImage = pygame.transform.scale(entityImage, (widthScaleFactor, heightScaleFactor))
+                self.gameDisplay.blit(entityImage, (imageXPos, imageYPos))
+
+    def regenerateEnvironment(self):
+        """
+        Randomizes the map and resets the players 
+        """
+        self.environment.clearEnvironment()
+        self.environment.remakeMap()
+        self.environment.initiateEnvironment(self.fieldSize, self.fieldSize)
+        self.agent.restartPlayer()
+
+    def putText(self, inputText:type[str]):
+        """
+        Places inputText at centered at location
+        """
+        location = (self.windowsWidth//2, self.windowsHeight+self.textAreaHeight//2)
+        text = courierNew.render(inputText, True, black, white)
+        textRectangle = text.get_rect()
+        textCenter = textRectangle.center
+        locationX = location[0] - textCenter[0]
+        locationY = location[1] - textCenter[1]
+        self.gameDisplay.blit(text, (locationX, locationY))
+
+    def generateEmptyMap(self):
+        """
+        Creates and returns an empty map with no terrain or traps
+        """
+        newMap = LOCATIONS(self.fieldSize, self.windowsWidth, self.windowsHeight)
+        emptyMap = ENVIRONMENT(self.fieldSize, self.windowsWidth, self.windowsHeight, newMap.getMap())
+        emptyMap.clearEnvironment()
+        return emptyMap.getMap()
+
+    def step(self, action):
+        """
+        Take an action from the action space and have the RL model apply it to the board
+        """
+        
 
 
-def renderEnvironment(gameDisplay, environment:type[ENVIRONMENT], fieldSize, windowsWidth, windowsHeight):
-    """
-    Loads and places the images onto the board 
-    """
-    widthScaleFactor = windowsWidth/fieldSize
-    heightScaleFactor = windowsHeight/fieldSize
-    bounds = fieldSize
-    map = environment.getMap()
-    for row in range(0, bounds):
-        for column in range(0, bounds):
-            entityType = environment.getEntity(row, column)
-            imageYPos = map[row][column]['y_pos']
-            imageXPos = map[row][column]['x_pos']
-            entityImage = getImage(entityType)
-            if (environment.getFieldEffect(row, column) == 'end'):
-                entityImage = endImg
-            entityImage = pygame.transform.scale(entityImage, (widthScaleFactor, heightScaleFactor))
-            gameDisplay.blit(entityImage, (imageXPos, imageYPos))
 
+    def playGame(self):
+        """
+        Allows the user to play the game, it will be initialized to be in the state of a 10x10 square map unless fieldSize is changed
+        """
+        running = True
+
+        round = 0
+        while running:
+            self.renderEnvironment()
+            self.generateBlankDisplay()
+            self.putText("Round:{}, Score:{}".format(round, self.agent.getScore()))
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        self.agent.move('down')
+                    if event.key == pygame.K_UP:
+                        self.agent.move('up')
+                    if event.key == pygame.K_RIGHT:
+                        self.agent.move('right')
+                    if event.key == pygame.K_LEFT:
+                        self.agent.move('left')
+            if (self.agent.isCurrentEnd()):
+                round += 1
+                self.regenerateEnvironment()
+
+            elif (self.agent.isCurrentEnd()):
+                break
+        self.close()
+
+    def close(self):
+        """
+        Close the pygame environment
+        """
+        pygame.quit()
+
+# Helper Functions
 def getImage(entityName):
     """
     Gets and returns the corresponding instance of the image (one-hot encoding)
@@ -126,70 +195,9 @@ def getImage(entityName):
     else:
         return emptyImg
 
-def regenerateEnvironment(environment, agent, fieldSize):
-    """
-    Randomizes the map and resets the players 
-    """
-    environment.clearEnvironment()
-    environment.remakeMap()
-    environment.initiateEnvironment(fieldSize, fieldSize)
-    agent.restartPlayer()
-
-def putText(gameDisplay, inputText:type[str], location):
-    """
-    Places inputText at centered at location
-    """
-    text = courierNew.render(inputText, True, black, white)
-    textRectangle = text.get_rect()
-    textCenter = textRectangle.center
-    locationX = location[0] - textCenter[0]
-    locationY = location[1] - textCenter[1]
-    gameDisplay.blit(text, (locationX, locationY))
-
-def createEmptyMap(fieldSize = 8):
-    """
-    Creates and returns an empty map with no terrain or traps
-    """
-    newMap = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-    emptyMap = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, newMap.getMap())
-    emptyMap.clearEnvironment()
-    return emptyMap.getMap()
-
-def playGame(fieldSize = 10):
-    """
-    Allows the user to play the game, it will be initialized to be in the state of a 10x10 square map unless fieldSize is changed
-    """
-    running = True
-
-    map = LOCATIONS(fieldSize, windowsWidth, windowsHeight)
-    environment = ENVIRONMENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
-    myAgent = AGENT(fieldSize, windowsWidth, windowsHeight, map.getMap())
-
-    gameDisplay = initializePygame()
-
-    round = 0
-    while running:
-        renderEnvironment(gameDisplay, environment, fieldSize, windowsWidth, windowsHeight)
-        generateBlankEnvironment(gameDisplay, field_size=fieldSize)
-        putText(gameDisplay, "Round:{}, Score:{}".format(round, myAgent.getScore()), (windowsWidth//2, windowsHeight+textAreaHeight//2))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    myAgent.move('down')
-                if event.key == pygame.K_UP:
-                    myAgent.move('up')
-                if event.key == pygame.K_RIGHT:
-                    myAgent.move('right')
-                if event.key == pygame.K_LEFT:
-                    myAgent.move('left')
-
-        if (myAgent.isCurrentEnd()):
-            round += 1
-            regenerateEnvironment(environment, myAgent, fieldSize)
-
-        elif (myAgent.isCurrentEnd()):
-            break
-    pygame.quit()
+def initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight):
+    pygame.init()
+    pygame.display.init()
+    gameDisplay = pygame.display.set_mode((_windowsWidth, _windowsHeight + _textAreaHeight))
+    pygame.display.set_caption("Maze Escape")
+    return gameDisplay

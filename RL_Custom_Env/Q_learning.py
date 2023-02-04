@@ -3,10 +3,6 @@ import math
 from gym import Env
 import random
 
-import mazeEscapeGame
-from ClassesMazeEscape.LOCATIONS import LOCATIONS
-
-
 def qTrain(environment:type[Env], numberOfEpisodes):
     """
     Algorithm for Q-learning
@@ -91,25 +87,4 @@ def qLearn(qTable, episodeNumber, totalEpisodes, currentState, newState, reward,
     qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.max(qTable[newState]) - qTable[currentState][action])
     return qTable
 
-
-
-test123 = LOCATIONS(6, 1280, 720).getMap()
-
-test = mazeEscape(10)
-episodes = 4
-
-qTable = qTrain(test, 500)
-
-for episode in range(0, episodes):
-    state = test.reset()
-    done = False
-    score = 0
-    while not done:
-        test.render()
-        action = np.argmax(qTable[state])
-        state, reward, done, info = test.step(action)
-        print("state:{}".format(state))
-        time.sleep(0.1)
-        score += reward
-    print("Episode:{}, Score:{}".format(episode, score))
-test.close()
+    

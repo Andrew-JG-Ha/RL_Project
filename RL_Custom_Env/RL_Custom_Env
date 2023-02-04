@@ -122,22 +122,4 @@ def mapAction(action) -> str:
     else:
         return action
 
-testMap = 
-test = mazeEscape(5)
-episodes = 10
 
-qTable = qTrain(test, 10000)
-
-for episode in range(0, episodes):
-    state = test.reset()
-    done = False
-    score = 0
-    while not done:
-        test.render()
-        action = np.argmax(qTable[state])
-        state, reward, done, info = test.step(action)
-        print("state:{}".format(state))
-        time.sleep(0.1)
-        score += reward
-    print("Episode:{}, Score:{}".format(episode, score))
-test.close()

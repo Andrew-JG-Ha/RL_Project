@@ -14,6 +14,10 @@ class AGENT(LOCATIONS):
             self.currentColumn = startColumn
         else:
             self.currentRow, self.currentColumn = self.getStart()
+
+        self.previousLocation = (self.currentRow.copy(), self.currentColumn.copy())
+        self.repeatVisit = 1
+
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
         self.totalReward = 0
         self.actionLog = list()
@@ -22,31 +26,39 @@ class AGENT(LOCATIONS):
         if (action == 'left'):
             newColumn = self.currentColumn - 1
             if (self.isMoveValid(self.currentRow, newColumn) == True):
-                self.totalReward -= 10
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
+                if ((self.currentRow, self.currentColumn) == self.previousLocation):
+                    self.totalReward -= 300
+                self.previousLocation = (self.currentRow.copy(), previousColumn.copy())
         elif (action == 'right'):
             newColumn = self.currentColumn + 1
             if (self.isMoveValid(self.currentRow, newColumn) == True):
-                self.totalReward -= 10
                 previousColumn = self.currentColumn
                 self.currentColumn = newColumn
                 self.updateEntityLocation(self.currentRow, previousColumn, self.currentRow, self.currentColumn)
+                if ((self.currentRow, self.currentColumn) == self.previousLocation):
+                    self.totalReward -= 300
+                self.previousLocation = (self.currentRow.copy(), previousColumn.copy())
         elif (action == 'up'):
             newRow = self.currentRow - 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
-                self.totalReward -= 10
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
+                if ((self.currentRow, self.currentColumn) == self.previousLocation):
+                    self.totalReward -= 300
+                self.previousLocation = (previousRow.copy(), self.currentColumn.copy())
         elif (action == 'down'):
             newRow = self.currentRow + 1
             if (self.isMoveValid(newRow, self.currentColumn) == True):
-                self.totalReward -= 10
                 previousRow = self.currentRow
                 self.currentRow = newRow
                 self.updateEntityLocation(previousRow, self.currentColumn, self.currentRow, self.currentColumn)
+                if ((self.currentRow, self.currentColumn) == self.previousLocation):
+                    self.totalReward -= 300
+                self.previousLocation = (previousRow.copy(), self.currentColumn.copy())
         else:
             pass
             # stay at current cell
@@ -59,20 +71,20 @@ class AGENT(LOCATIONS):
         """
         if (self.isOutOfBounds(row, column)):
             # Remains on same cell
-            self.totalReward -= 100
+            self.totalReward -= 250
             return False
         else:
             if (self.isTrap(row, column)):
                 # Action is dependent on the trap - will add later
                 # Can move onto a trap but deduction in points
-                self.totalReward -= 25
+                self.totalReward -= 10
                 # Traps will have unique abilities - to be added
                 return True
             elif (self.isWall(row, column)):
-                self.totalReward -= 100
+                self.totalReward -= 250
                 return False
             elif (self.isBonus(row, column)):
-                self.totalReward += 500
+                self.totalReward += 1000
                 return True
             else:
                 # Is valid move, no deduction
@@ -138,7 +150,7 @@ class AGENT(LOCATIONS):
         """
         fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
         if (fieldEffect == "end"):
-            self.totalReward += 1000
+            self.totalReward += 9999
             return True
         else:
             return False

@@ -3,6 +3,10 @@ import math
 from gym import Env
 import random
 
+import mazeEscapeGame
+from ClassesMazeEscape.LOCATIONS import LOCATIONS
+
+
 def qTrain(environment:type[Env], numberOfEpisodes):
     """
     Algorithm for Q-learning
@@ -36,7 +40,8 @@ def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:type[E
     returns an action
     """
     randomValue = random.uniform(0.0, 1.0)
-    epsilon = epsilonDecay(episodeNumber, totalEpisodes)
+    # epsilon = epsilonDecay(episodeNumber, totalEpisodes)
+    epsilon = 0.75
     if (randomValue < epsilon):
         # if random value is less than the epsilon value, then explore
         action = environment.action_space.sample()
@@ -59,7 +64,7 @@ def gammaDecay(episodeNumber, totalEpisodes):
     """
     Decay function for gamma value with respect to episode number
     """
-    minimumGamma = 0.05
+    minimumGamma = 0.1
     maximumGamma = 1.0
     timeConstant = 2 / (0.9 * totalEpisodes)
     gammaValue = (maximumGamma - minimumGamma) * math.exp((-1) * timeConstant * episodeNumber)
@@ -69,8 +74,8 @@ def epsilonDecay(episodeNumber, totalEpsiodes):
     """
     Decay function for epsilon value with respect to episode number
     """
-    minimumEpsilon = 0.2
-    maximumEpsilon = 1.0
+    minimumEpsilon = 0.5
+    maximumEpsilon = 0.8
     timeConstant = 2 / (0.8 * totalEpsiodes)
     epsilonValue = (maximumEpsilon - minimumEpsilon) * math.exp((-1) * timeConstant * episodeNumber)
     return epsilonValue
@@ -79,7 +84,32 @@ def qLearn(qTable, episodeNumber, totalEpisodes, currentState, newState, reward,
     """
     Function which holds the Q-learning algorithm, calls the 3 decay functions and returns the updated Q-table
     """
-    alpha = alphaDecay(episodeNumber, totalEpisodes)
-    gamma = gammaDecay(episodeNumber, totalEpisodes)
-    qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.argmax(qTable[newState]) - qTable[currentState][action])
+    alpha = 0.75
+    gamma = 0.6
+    # alpha = alphaDecay(episodeNumber, totalEpisodes)
+    # gamma = gammaDecay(episodeNumber, totalEpisodes)
+    qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.max(qTable[newState]) - qTable[currentState][action])
     return qTable
+
+
+
+test123 = LOCATIONS(6, 1280, 720).getMap()
+
+test = mazeEscape(10)
+episodes = 4
+
+qTable = qTrain(test, 500)
+
+for episode in range(0, episodes):
+    state = test.reset()
+    done = False
+    score = 0
+    while not done:
+        test.render()
+        action = np.argmax(qTable[state])
+        state, reward, done, info = test.step(action)
+        print("state:{}".format(state))
+        time.sleep(0.1)
+        score += reward
+    print("Episode:{}, Score:{}".format(episode, score))
+test.close()

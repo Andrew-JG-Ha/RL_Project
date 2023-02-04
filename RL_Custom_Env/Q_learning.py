@@ -11,23 +11,23 @@ def qTrain(environment:type[Env], numberOfEpisodes):
     returns the trained Q-table
     """
     isFirstCall = True
-    qTable = np.zeros(((environment.observation_space.high, environment.observation_space.high) + environment.action_space.n))
+    qTable = np.zeros(((environment.observation_space.high, environment.observation_space.high) + (environment.action_space.n,)))
 
     for episode in range(0, numberOfEpisodes):
         state = environment.reset()
         done = False
-
         while not done:
             if (isFirstCall):
                 action = environment.action_space.sample()
+                isFirstCall = False
             else:
-                action = epsilonGreedyPolicy(qTable, numberOfEpisodes, environment, state)
+                action = epsilonGreedyPolicy(qTable, episode, numberOfEpisodes, environment, state)
+            newState, reward, done, info = environment.step(action)
+            qTable = qLearn(qTable, episode, numberOfEpisodes, state, newState, reward, action)
+            state = newState
+    return qTable
 
-            qTable = qLearn(qTable, episode, numberOfEpisodes, state)
-
-    return qTable, maxReward
-
-def epsilonGreedyPolicy(qTable, episodeNumber, environment:type[Env], currentState):
+def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:type[Env], currentState):
     """
     epsilon-greedy-policy
     the function to determine if the agent will explore or exploit previous traning data
@@ -36,7 +36,7 @@ def epsilonGreedyPolicy(qTable, episodeNumber, environment:type[Env], currentSta
     returns an action
     """
     randomValue = random.uniform(0.0, 1.0)
-    epsilon = epsilonDecay(episodeNumber)
+    epsilon = epsilonDecay(episodeNumber, totalEpisodes)
     if (randomValue < epsilon):
         # if random value is less than the epsilon value, then explore
         action = environment.action_space.sample()
@@ -69,16 +69,17 @@ def epsilonDecay(episodeNumber, totalEpsiodes):
     """
     Decay function for epsilon value with respect to episode number
     """
-    minimumEpsilon = 0.1
+    minimumEpsilon = 0.2
     maximumEpsilon = 1.0
     timeConstant = 2 / (0.8 * totalEpsiodes)
     epsilonValue = (maximumEpsilon - minimumEpsilon) * math.exp((-1) * timeConstant * episodeNumber)
     return epsilonValue
 
-def qLearn(table, episodeNumber, totalEpisodes):
+def qLearn(qTable, episodeNumber, totalEpisodes, currentState, newState, reward, action):
     """
-    Function which holds the Q-learning algorithm, calls the 3 decay functions and 
+    Function which holds the Q-learning algorithm, calls the 3 decay functions and returns the updated Q-table
     """
     alpha = alphaDecay(episodeNumber, totalEpisodes)
     gamma = gammaDecay(episodeNumber, totalEpisodes)
-    
+    qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.argmax(qTable[newState]) - qTable[currentState][action])
+    return qTable

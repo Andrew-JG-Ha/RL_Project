@@ -10,6 +10,7 @@ from gym.spaces import Discrete, Tuple
 
 # Importing Helper Libraries
 import numpy as np
+from Q_learning import qTrain
 
 # Importing Stable-Baselines3 Stuff
 from stable_baselines3 import ppo
@@ -121,40 +122,22 @@ def mapAction(action) -> str:
     else:
         return action
 
+testMap = 
 test = mazeEscape(5)
 episodes = 10
 
-print(test.observation_space.high)
+qTable = qTrain(test, 10000)
 
-print("test:{}".format(test.reset()))
-
-# qTable = np.zeros(test.observation_space.n, (test.action_space.n,))
-
-
-tableTest = np.zeros(((3,3) + (5,)))
-
-test321 = tableTest[(2,2)]
-
-testtesttest = test.observation_space
-
-testTable = np.zeros((test.observation_space.high, test.observation_space.high) + (test.action_space.n,))
-testTable[(2,2)][2] = 10
-greeting = testTable[(2,2)]
-
-test123 = 123
-
-
-
-# for episode in range(0, episodes):
-#     state = test.reset()
-#     done = False
-#     score = 0
-#     while not done:
-#         test.render()
-#         action = test.action_space.sample()
-#         state, reward, done, info = test.step(action)
-#         print("state:{}".format(state))
-#         time.sleep(0.1)
-#         score += reward
-#     print("Episode:{}, Score:{}".format(episode, score))
-# test.close()
+for episode in range(0, episodes):
+    state = test.reset()
+    done = False
+    score = 0
+    while not done:
+        test.render()
+        action = np.argmax(qTable[state])
+        state, reward, done, info = test.step(action)
+        print("state:{}".format(state))
+        time.sleep(0.1)
+        score += reward
+    print("Episode:{}, Score:{}".format(episode, score))
+test.close()

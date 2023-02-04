@@ -18,7 +18,7 @@ class AGENT(LOCATIONS):
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 
         self.minReward = -0.5 * self.getMap().size
-        self.totalReward = 0
+        self.totalReward = 0.0
         
         self.actionLog = list()
         self.visited = set()
@@ -158,7 +158,7 @@ class AGENT(LOCATIONS):
         self.currentRow, self.currentColumn = self.getStart()
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 
-    def getScore(self):
+    def getScore(self) -> float:
         """
         Returns the current score of the agent
         """

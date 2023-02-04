@@ -60,6 +60,11 @@ class mazeEscape():
         self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         self.agent = AGENT(_fieldSize, _windowsWidth, _windowsHeight, map)
 
+        self.maxSteps = _fieldSize*4
+        self.actionSpace = self.agent.validActions
+        self.state = (self.agent.currentRow, self.agent.currentColumn)
+        self.observationSpace = (_fieldSize, _fieldSize)
+
     def generateBlankDisplay(self) -> None:
         """
         Generates the blank display, creates the playing field
@@ -129,7 +134,18 @@ class mazeEscape():
         """
         Take an action from the action space and have the RL model apply it to the board
         """
-        
+        previousTotalReward = self.agent.getScore()
+        self.agent.move(mapAction(action))
+        self.state = (self.agent.currentRow, self.agent.currentColumn)
+        actionReward = self.agent.getScore() - previousTotalReward
+        self.maxSteps -= 1
+        if self.agent.isCurrentEnd() or self.maxSteps < 0:
+            done = True
+        elif self.agent.getScore() < self.agent.minReward:
+            done = True
+        else:
+            done = False
+        return self.state, actionReward, done
 
 
 
@@ -201,3 +217,22 @@ def initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight):
     gameDisplay = pygame.display.set_mode((_windowsWidth, _windowsHeight + _textAreaHeight))
     pygame.display.set_caption("Maze Escape")
     return gameDisplay
+
+def mapAction(action) -> str:
+    """
+    Maps an integer value from 0->3 to a string action
+    0 -> up
+    1 -> down
+    2 -> left
+    3 -> right
+    """
+    if action == 0:
+        return "up"
+    elif action == 1:
+        return "down"
+    elif action == 2:
+        return "left"
+    elif action == 3:
+        return "right"
+    else:
+        return action

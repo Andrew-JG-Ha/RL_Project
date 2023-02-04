@@ -147,7 +147,14 @@ class mazeEscape():
             done = False
         return self.state, actionReward, done
 
-
+    def render(self):
+        """
+        Render and show the current state of the game, where the agent's at and what the current map looks like
+        """
+        self.renderEnvironment()
+        self.generateBlankDisplay()
+        self.putText("Score:{}".format(self.agent.getScore()))
+        pygame.display.update()
 
     def playGame(self):
         """
@@ -236,3 +243,6 @@ def mapAction(action) -> str:
         return "right"
     else:
         return action
+
+test = mazeEscape()
+test.playGame()

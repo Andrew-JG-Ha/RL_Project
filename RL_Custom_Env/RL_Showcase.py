@@ -43,17 +43,13 @@ def file_setup():
     """
     qFolder = "QTables"
     pretrainedFolder = "pretrainedQTables"
-    newTablesFolder = "newQTables"
     currentPath = os.path.abspath(os.path.dirname(__file__))
     parentPath = os.path.normpath(os.path.join(currentPath, qFolder))
     pretrainedPath = os.path.normpath(os.path.join(parentPath, pretrainedFolder))
-    newTablesPath = os.path.normpath(os.path.join(parentPath, newTablesFolder))
     if (not os.path.exists(parentPath)):
         os.mkdir(parentPath)
         if (not os.path.exists(pretrainedPath)):
             os.mkdir(pretrainedPath)
-        if (not os.path.exists(newTablesPath)):
-            os.mkdir(newTablesPath)
 
 def saveToFile(fileDirectory, filename, object):
     """

@@ -44,7 +44,6 @@ fieldSize = 8
 
 # EMPTY MAP INITIALIZATION
 emptyMap = generateEmptyMap(fieldSize, windowsWidth, windowsHeight)
-print(emptyMap.dtype)
 
 # PYGAME WINDOW INITIALIZATION AND IMAGE LOADING
 pygame.init()
@@ -78,7 +77,7 @@ class mazeEscape():
             self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         else:
             map = _map
-            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map, False, False)
 
         self.agent = AGENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         self.initialMap = map.copy()

@@ -88,21 +88,3 @@ def qLearn(qTable, episodeNumber, totalEpisodes, currentState, newState, reward,
     gamma = gammaDecay(episodeNumber, totalEpisodes)
     qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.max(qTable[newState]) - qTable[currentState][action])
     return qTable
-
-test = mazeEscape(25)
-episodes = 1
-
-qTable = qTrain(test, 15000, True)
-
-for episode in range(0, episodes):
-    state = test.reset()
-    done = False
-    score = 0
-    while not done:
-        test.render("Testing")
-        action = np.argmax(qTable[state])
-        state, reward, done = test.step(action)
-        time.sleep(0.1)
-        score += reward
-    print("Episode:{}, Score:{}".format(episode, score))
-test.close()

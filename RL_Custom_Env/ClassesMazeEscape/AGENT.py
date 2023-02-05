@@ -74,10 +74,10 @@ class AGENT(LOCATIONS):
                 self.totalReward -= 0.75
                 return False
             if (self.isBonus(row, column)):
-                self.totalReward += 5
+                self.totalReward += 10
                 return True
             if ((row, column) in self.visited):
-                self.totalReward -=0.25
+                self.totalReward -=0.45
                 return True
             else:
                 self.totalReward -=0.05
@@ -143,7 +143,7 @@ class AGENT(LOCATIONS):
         """
         fieldEffect = self.getFieldEffect(self.currentRow, self.currentColumn)
         if (fieldEffect == "end"):
-            self.totalReward += 10
+            self.totalReward += 25
             return True
         else:
             return False

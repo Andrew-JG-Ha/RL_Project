@@ -84,9 +84,9 @@ class mazeEscape():
         self.initialMap = map.copy()
 
         self.maxSteps = _fieldSize*4
-        self.actionSpace = self.agent.validActions
         self.state = (self.agent.currentRow, self.agent.currentColumn)
         self.observationSpace = (_fieldSize, _fieldSize)
+        self.actionSpace = self.agent.validActions
 
     def generateBlankDisplay(self) -> None:
         """
@@ -269,8 +269,3 @@ def mapAction(action) -> str:
         return "right"
     else:
         return action
-
-emptyMap2 = generateEmptyMap(fieldSize + 3, windowsWidth, windowsHeight)
-
-test = mazeEscape(fieldSize + 3, windowsWidth, windowsHeight, textAreaHeight, _map = emptyMap2)
-test.playGame()

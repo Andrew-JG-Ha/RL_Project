@@ -4,38 +4,55 @@ import random
 import time
 import os
 import pickle as pkl
+import numpy as np
 
 def main():
     file_setup()
+    pretrainedEmptyData = None
+    pretrainedRandomData0 = None
 
-    fieldSize = 20
+    fieldSize = 15
     windowsWidth = 1280
     windowsHeight = 720
     textAreaHeight = 80
 
-    # emptyMap = generateEmptyMap(fieldSize, windowsWidth, windowsHeight)
-    # emptyMapEscape = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight, emptyMap)
-    # randomMapEscape = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
+    emptyMap = generateEmptyMap(fieldSize, windowsWidth, windowsHeight)
+    emptyMapEscape = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight, emptyMap)
+    randomMapEscape = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
 
-    # qTableEmptyMap = qTrain(emptyMapEscape, 20000)
-    # qTableRandomMap = qTrain(randomMapEscape, 25000)
+    qTableEmptyMap = qTrain(emptyMapEscape, 15000, True)
+    qTableRandomMap = qTrain(randomMapEscape, 30000, True)
 
-    # packageEmptyMap = {"windowsData":(fieldSize, windowsWidth, windowsHeight), "map":(emptyMapEscape.environment.getMap()), "qTable":qTableEmptyMap}
-    # packageRandomMap = {"windowsData":(fieldSize, windowsWidth, windowsHeight), "map":(randomMapEscape.environment.getMap()), "qTable":qTableRandomMap}
-
-
-    # saveToFile(pretrainedPath, "emptyMapPreTrained", packageEmptyMap)
-    # saveToFile(pretrainedPath, "randomMapPreTrained0", packageRandomMap)
+    emptyMapEscape.reset()
+    randomMapEscape.reset()
+    packageEmptyMap = {"windowsData":(fieldSize, windowsWidth, windowsHeight), "map":(emptyMapEscape.environment.getMap()), "qTable":qTableEmptyMap}
+    packageRandomMap = {"windowsData":(fieldSize, windowsWidth, windowsHeight), "map":(randomMapEscape.environment.getMap()), "qTable":qTableRandomMap}
 
     pretrainedPath = pretrainDataDirectory()
     fileDirectoryEmptyMap = pretrainedPath + "/emptyMapPreTrained.pkl"
     fileDirectoryRandomMap = pretrainedPath + "/randomMapPreTrained0.pkl"
 
-    with open(fileDirectoryEmptyMap, "rb") as f:
-        pretrainedEmptyMap = pkl.load(f)
+    saveToFile(pretrainedPath, "emptyMapPreTrained", packageEmptyMap)
+    saveToFile(pretrainedPath, "randomMapPreTrained0", packageRandomMap)
 
-    with open(fileDirectoryRandomMap, "rb") as f:
-        pretrainedRandomMap0 = pkl.load(f)
+
+    # with open(fileDirectoryEmptyMap, "rb") as f:
+    #     pretrainedEmptyData = pkl.load(f)
+    # with open(fileDirectoryRandomMap, "rb") as f:
+    #     pretrainedRandomData0 = pkl.load(f)
+    # eMapWindowsData = pretrainedEmptyData["windowsData"]
+    # eMap = pretrainedEmptyData["map"]
+    # eMapQTable = pretrainedEmptyData["qTable"]
+    # rMapWindowsData = pretrainedRandomData0["windowsData"]
+    # rMap = pretrainedRandomData0["map"]
+    # rMapQTable = pretrainedRandomData0["qTable"]
+    # pretrainedRandomMap = mazeEscape(rMapWindowsData[0], rMapWindowsData[1], rMapWindowsData[2], textAreaHeight, rMap)
+    # pretrainedRandomMap.close()
+    # pretrainedEmptyMap = mazeEscape(eMapWindowsData[0], eMapWindowsData[1], eMapWindowsData[2], textAreaHeight, eMap)
+
+    # print("Pretrained Q-tables applied to their respective maps")
+    # testingQTable(eMapQTable, pretrainedEmptyMap, "pretrainedEmptyQTable")
+
 
 def file_setup():
     """
@@ -70,6 +87,18 @@ def pretrainDataDirectory():
     parentPath = os.path.normpath(os.path.join(currentPath, qFolder))
     pretrainedPath = os.path.normpath(os.path.join(parentPath, pretrainedFolder))
     return pretrainedPath
+
+def testingQTable(qTable, environment:mazeEscape, qTableName):
+    state = environment.reset()
+    done = False
+    score = 0
+    while (not done):
+        environment.render(qTableName)
+        action = np.argmax(qTable[state])
+        state, reward, done = environment.step(action)
+        score += reward
+    environment.close()
+
 
 if __name__ == "__main__":
     main()

@@ -10,4 +10,4 @@
   [✔] Making the Agent class (to add the agent)<br/>
   [✔] Making the Deque class (to be used in Environment to ensure maze has a path from start to end: using breadth-first search algorithm)<br/>
   [✔] Making the custom environment class for gym<br/>
-  [ ] Applying a Q-Learning model/algorithm onto the custom gym environment<br/>
+  [✔] Applying a Q-Learning model/algorithm onto the custom gym environment<br/>

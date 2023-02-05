@@ -21,6 +21,16 @@ from ClassesMazeEscape.ENVIRONMENT import ENVIRONMENT, trapList, terrainList, bo
     - Traps: Deduction in moves or points
     - Trophy: +10 points
 """
+# GENERATE EMPTY MAP FUNCTION
+def generateEmptyMap(_fieldSize, _windowsWidth, _windowsHeight):
+    """
+    Creates and returns an empty map with no terrain or traps
+    """
+    newMap = LOCATIONS(_fieldSize, _windowsWidth, _windowsHeight)
+    emptyMap = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, newMap.getMap())
+    emptyMap.clearEnvironment()
+    return emptyMap.getMap()
+
 # COLORS
 black = (0,0,0)
 white = (255,255,255)
@@ -30,6 +40,11 @@ blue = (0,0,255)
 windowsWidth = 1280
 windowsHeight = 720
 textAreaHeight = 80
+fieldSize = 8
+
+# EMPTY MAP INITIALIZATION
+emptyMap = generateEmptyMap(fieldSize, windowsWidth, windowsHeight)
+print(emptyMap.dtype)
 
 # PYGAME WINDOW INITIALIZATION AND IMAGE LOADING
 pygame.init()
@@ -48,17 +63,25 @@ endImg = pygame.image.load("RL_Custom_Env\GameImages\emptyEnd.png")
 courierNew = pygame.font.SysFont('couriernew', 30, True, False)
 
 class mazeEscape():
-    def __init__(self, _fieldSize = 8, _windowsWidth = windowsWidth, _windowsHeight = windowsHeight, _textAreaHeight = textAreaHeight) -> None:
+    def __init__(self, _fieldSize = fieldSize, _windowsWidth = windowsWidth, _windowsHeight = windowsHeight, _textAreaHeight = textAreaHeight, _map = emptyMap) -> None:
         self.gameDisplay = initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight)
 
         self.fieldSize = _fieldSize
         self.windowsWidth = _windowsWidth
         self.windowsHeight = _windowsHeight
         self.textAreaHeight = _textAreaHeight
+        if (_map is emptyMap):
+            map = LOCATIONS(_fieldSize, _windowsWidth, _windowsHeight).getMap()
+            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+        elif ((self.fieldSize != fieldSize or self.windowsHeight != windowsHeight or self.windowsWidth != windowsWidth) and _map is emptyMap):
+            map = LOCATIONS(_fieldSize, _windowsWidth, _windowsHeight).getMap()
+            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+        else:
+            map = _map
+            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
 
-        map = LOCATIONS(_fieldSize, _windowsWidth, _windowsHeight).getMap()
-        self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         self.agent = AGENT(_fieldSize, _windowsWidth, _windowsHeight, map)
+        self.initialMap = map.copy()
 
         self.maxSteps = _fieldSize*4
         self.actionSpace = self.agent.validActions
@@ -121,15 +144,6 @@ class mazeEscape():
         locationY = location[1] - textCenter[1]
         self.gameDisplay.blit(text, (locationX, locationY))
 
-    def generateEmptyMap(self):
-        """
-        Creates and returns an empty map with no terrain or traps
-        """
-        newMap = LOCATIONS(self.fieldSize, self.windowsWidth, self.windowsHeight)
-        emptyMap = ENVIRONMENT(self.fieldSize, self.windowsWidth, self.windowsHeight, newMap.getMap())
-        emptyMap.clearEnvironment()
-        return emptyMap.getMap()
-
     def step(self, action):
         """
         Take an action from the action space and have the RL model apply it to the board
@@ -156,7 +170,19 @@ class mazeEscape():
         self.putText("Score:{}".format(self.agent.getScore()))
         pygame.display.update()
 
-    def playGame(self):
+    def reset(self):
+        """
+        Resets the agent to the start and resets the map
+        """
+        self.maxSteps = self.fieldSize*4
+        self.environment.clearEnvironment()
+        self.environment.setMap(self.initialMap.copy())
+        self.agent.setMap(self.environment.getMap())
+        self.agent.restartPlayer()
+        self.state = (self.agent.currentRow, self.agent.currentColumn)
+        return self.state
+
+    def playGame(self, repeatMap = False):
         """
         Allows the user to play the game, it will be initialized to be in the state of a 10x10 square map unless fieldSize is changed
         """
@@ -180,12 +206,12 @@ class mazeEscape():
                         self.agent.move('right')
                     if event.key == pygame.K_LEFT:
                         self.agent.move('left')
-            if (self.agent.isCurrentEnd()):
+            if (self.agent.isCurrentEnd() and repeatMap == False):
                 round += 1
                 self.regenerateEnvironment()
-
-            elif (self.agent.isCurrentEnd()):
-                break
+            elif (self.agent.isCurrentEnd() and repeatMap == True):
+                round += 1
+                self.reset()
         self.close()
 
     def close(self):
@@ -244,5 +270,7 @@ def mapAction(action) -> str:
     else:
         return action
 
-test = mazeEscape()
+emptyMap2 = generateEmptyMap(fieldSize + 3, windowsWidth, windowsHeight)
+
+test = mazeEscape(fieldSize + 3, windowsWidth, windowsHeight, textAreaHeight, _map = emptyMap2)
 test.playGame()

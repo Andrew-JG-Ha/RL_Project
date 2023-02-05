@@ -1,6 +1,5 @@
 from Q_learning import qTrain
-from mazeEscapeGame import mazeEscape, generateEmptyMap
-import random
+from mazeEscapeGame import mazeEscape
 import time
 import os
 import pickle as pkl
@@ -27,14 +26,10 @@ def main():
     pretrainedRandomMap = mazeEscape(rMapWindowsData[0], rMapWindowsData[1], rMapWindowsData[2], textAreaHeight, rMap)
     testingQTable(rMapQTable, pretrainedRandomMap, "pretrainedRandomQTable")
 
-    newMap1 = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
-    testQTable = qTrain(newMap1, 30000, True)
-
     print("Training a Q-table on a random map with rendering:")
     newMap = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
     newQTable = qTrain(newMap, 30000, True)
     testingQTable(newQTable, newMap, "TrainedQTable")
-    testingQTable(testQTable, newMap1, "Testing123")
 
 def file_setup():
     """

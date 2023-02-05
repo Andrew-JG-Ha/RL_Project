@@ -28,7 +28,7 @@ def main():
 
     print("Training a Q-table on a random map with rendering:")
     newMap = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
-    newQTable = qTrain(newMap, 30000, True)
+    newQTable = qTrain(newMap, 66000, True)
     testingQTable(newQTable, newMap, "TrainedQTable")
 
 def file_setup():

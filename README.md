@@ -1,7 +1,9 @@
 # RL_Project
 ## Reinforcement Learning Projects
 ### 1. Reinforcement Learning algorithm applied to an Atari Game
-
+  [ ] Importing an ensuring Atari game works<br/>
+  [ ] Apply a policy to the game and train an RL model to play the game<br/>
+  
 ### 2. Reinforcement Learning algorithm (PPO) applied to the cartpole game
   
 ### 3. Q-Learning model from scratch applied to a custom enviroment made from pygame <br/>

@@ -17,7 +17,7 @@ class AGENT(LOCATIONS):
 
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 
-        self.minReward = -0.5 * self.getMap().size
+        self.minReward = -0.5 * len(self.getMap())
         self.totalReward = 0.0
         
         self.actionLog = list()
@@ -68,16 +68,16 @@ class AGENT(LOCATIONS):
             return False
         else:
             if (self.isTrap(row, column)):
-                self.totalReward -= 0.15
+                self.totalReward -= 0.25
                 return True
             if (self.isWall(row, column)):
-                self.totalReward -= 0.75
+                self.totalReward -= 0.80
                 return False
             if (self.isBonus(row, column)):
                 self.totalReward += 10
                 return True
             if ((row, column) in self.visited):
-                self.totalReward -=0.45
+                self.totalReward -=0.55
                 return True
             else:
                 self.totalReward -=0.05
@@ -168,5 +168,5 @@ class AGENT(LOCATIONS):
         """
         Prints the actions taken and the total score
         """
-        print("Total Actions: {}".format(len(self.actionLog)))
+        print("Actions: {}".format(self.actionLog))
         print("Total Score: {}".format(self.totalReward))

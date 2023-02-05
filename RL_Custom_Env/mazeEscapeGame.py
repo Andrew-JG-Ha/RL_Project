@@ -63,7 +63,7 @@ courierNew = pygame.font.SysFont('couriernew', 30, True, False)
 
 class mazeEscape():
     def __init__(self, _fieldSize = fieldSize, _windowsWidth = windowsWidth, _windowsHeight = windowsHeight, _textAreaHeight = textAreaHeight, _map = emptyMap) -> None:
-        self.gameDisplay = initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight)
+        self.gameDisplay, self.clock = initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight)
 
         self.fieldSize = _fieldSize
         self.windowsWidth = _windowsWidth
@@ -212,6 +212,12 @@ class mazeEscape():
                 round += 1
                 self.reset()
 
+    def updateClock(self):
+        """
+        Updates the clock tick
+        """
+        self.clock.tick(10)
+
 # Helper Functions
 def getImage(entityName):
     """
@@ -239,9 +245,13 @@ def getImage(entityName):
 def initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight):
     pygame.init()
     pygame.display.init()
+    pygame.event.set_blocked(pygame.MOUSEMOTION)
+    pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+    pygame.event.set_blocked(pygame.MOUSEBUTTONUP)
     gameDisplay = pygame.display.set_mode((_windowsWidth, _windowsHeight + _textAreaHeight))
     pygame.display.set_caption("Maze Escape")
-    return gameDisplay
+    clock = pygame.time.Clock()
+    return gameDisplay, clock
 
 def mapAction(action) -> str:
     """

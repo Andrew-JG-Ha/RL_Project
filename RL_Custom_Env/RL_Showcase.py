@@ -1,6 +1,5 @@
 from Q_learning import qTrain
 from mazeEscapeGame import mazeEscape
-import time
 import os
 import pickle as pkl
 import numpy as np
@@ -15,20 +14,22 @@ def main():
     textAreaHeight = 80
 
     pretrainedPath = pretrainDataDirectory()
-    fileDirectoryRandomMap = pretrainedPath + "/randomMapPreTrained0.pkl"
-    with open(fileDirectoryRandomMap, "rb") as f:
-        pretrainedRandomData0 = pkl.load(f)
-    rMapWindowsData = pretrainedRandomData0["windowsData"]
-    rMap = pretrainedRandomData0["map"]
-    rMapQTable = pretrainedRandomData0["qTable"]
+    filesInPath = os.listdir(pretrainedPath)
 
-    print("Pretrained Q-table applied to its map:")
-    pretrainedRandomMap = mazeEscape(rMapWindowsData[0], rMapWindowsData[1], rMapWindowsData[2], textAreaHeight, rMap)
-    testingQTable(rMapQTable, pretrainedRandomMap, "pretrainedRandomQTable")
+    for file in filesInPath:
+        fileDirectoryRandomMap = pretrainedPath + "/" + file
+        with open(fileDirectoryRandomMap, "rb") as f:
+            pretrainedRandomData0 = pkl.load(f)
+        rMapWindowsData = pretrainedRandomData0["windowsData"]
+        rMap = pretrainedRandomData0["map"]
+        rMapQTable = pretrainedRandomData0["qTable"]
+        print("Showcasing: {}'s Q-Table".format(file))
+        pretrainedRandomMap = mazeEscape(rMapWindowsData[0], rMapWindowsData[1], rMapWindowsData[2], textAreaHeight, rMap)
+        testingQTable(rMapQTable, pretrainedRandomMap, "pretrainedRandomQTable")
 
-    print("Training a Q-table on a random map with rendering:")
+    print("Training a Q-table with 100000 episodes on a random map with rendering on:")
     newMap = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
-    newQTable = qTrain(newMap, 75000, True)
+    newQTable = qTrain(newMap, 100000, True)
     testingQTable(newQTable, newMap, "TrainedQTable")
 
 def file_setup():
@@ -57,6 +58,11 @@ def saveToFile(fileDirectory, filename, object):
     with open(pickleFileName, 'wb') as f:
         pkl.dump(object, f)
 
+def createPackage(fieldSize, windowsWidth, windowsHeight, mazeGameinstance:mazeEscape, qTable):
+    mazeGameinstance.reset()
+    package = {"windowsData":(fieldSize, windowsWidth, windowsHeight), "map":mazeGameinstance.environment.getMap(), "qTable":qTable}
+    return package
+
 def pretrainDataDirectory():
     qFolder = "QTables"
     pretrainedFolder = "pretrainedQTables"
@@ -73,7 +79,7 @@ def testingQTable(qTable, environment:mazeEscape, qTableName):
         environment.render(qTableName)
         action = np.argmax(qTable[state])
         state, reward, done = environment.step(action)
-        time.sleep(0.15)
+        environment.updateClock()
         score += reward
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@ import numpy as np
 import math
 from mazeEscapeGame import mazeEscape
 import random
-import time
 
 def qTrain(environment:mazeEscape, numberOfEpisodes, render = False):
     """
@@ -28,8 +27,9 @@ def qTrain(environment:mazeEscape, numberOfEpisodes, render = False):
             state = newState
             if render == True:
                 if (int(math.log2(episode + 1)) == math.log2(episode + 1)):
-                    environment.render(episode)
-                    time.sleep(0.1)
+                    environment.render(episode + 1)
+                    environment.updateClock()
+        print("Episode:{} | Score:{}".format(episode + 1, environment.agent.getScore()))
     return qTable
 
 def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:mazeEscape, currentState):
@@ -74,8 +74,8 @@ def epsilonDecay(episodeNumber, totalEpsiodes):
     """
     Decay function for epsilon value with respect to episode number
     """
-    minimumEpsilon = 0.5
-    maximumEpsilon = 0.8
+    minimumEpsilon = 0.75
+    maximumEpsilon = 1
     timeConstant = 2 / (0.8 * totalEpsiodes)
     epsilonValue = (maximumEpsilon - minimumEpsilon) * math.exp((-1) * timeConstant * episodeNumber)
     return epsilonValue

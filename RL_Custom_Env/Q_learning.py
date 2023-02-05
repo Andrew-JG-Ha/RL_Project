@@ -2,8 +2,6 @@ import numpy as np
 import math
 from mazeEscapeGame import mazeEscape
 import random
-
-
 import time
 
 def qTrain(environment:mazeEscape, numberOfEpisodes, render = False):
@@ -29,10 +27,9 @@ def qTrain(environment:mazeEscape, numberOfEpisodes, render = False):
             qTable = qLearn(qTable, episode, numberOfEpisodes, state, newState, reward, action)
             state = newState
             if render == True:
-                environment.render()
-                time.sleep(0.05)
-            # if (episode % 250 == 0):
-            #     print("Episode:{}, EpisodeScore:{}".format(episode, environment.agent.totalReward))
+                if (int(math.log2(episode + 1)) == math.log2(episode + 1)):
+                    environment.render(episode)
+                    time.sleep(0.05)
     return qTable
 
 def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:mazeEscape, currentState):
@@ -45,7 +42,6 @@ def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:mazeEs
     """
     randomValue = random.uniform(0.0, 1.0)
     epsilon = epsilonDecay(episodeNumber, totalEpisodes)
-    # epsilon = 0.25
     if (randomValue < epsilon):
         # if random value is less than the epsilon value, then explore
         action = environment.actionSpace.get(random.choice([i for i in environment.actionSpace]))
@@ -88,25 +84,22 @@ def qLearn(qTable, episodeNumber, totalEpisodes, currentState, newState, reward,
     """
     Function which holds the Q-learning algorithm, calls the 3 decay functions and returns the updated Q-table
     """
-    # alpha = 0.15
-    # gamma = 0.7
     alpha = alphaDecay(episodeNumber, totalEpisodes)
     gamma = gammaDecay(episodeNumber, totalEpisodes)
     qTable[currentState][action] = qTable[currentState][action] + alpha * (reward + gamma * np.max(qTable[newState]) - qTable[currentState][action])
     return qTable
 
+test = mazeEscape(25)
+episodes = 1
 
-test = mazeEscape()
-episodes = 2
-
-qTable = qTrain(test, 10000)
+qTable = qTrain(test, 15000, True)
 
 for episode in range(0, episodes):
     state = test.reset()
     done = False
     score = 0
     while not done:
-        test.render()
+        test.render("Testing")
         action = np.argmax(qTable[state])
         state, reward, done = test.step(action)
         time.sleep(0.1)

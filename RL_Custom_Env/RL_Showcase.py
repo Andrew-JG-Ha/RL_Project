@@ -7,8 +7,9 @@ import numpy as np
 def main():
     file_setup()
     pretrainedRandomData0 = None
+    savePackage = False
 
-    fieldSize = 15
+    fieldSize = 14
     windowsWidth = 1280
     windowsHeight = 720
     textAreaHeight = 80
@@ -25,12 +26,16 @@ def main():
         rMapQTable = pretrainedRandomData0["qTable"]
         print("Showcasing: {}'s Q-Table".format(file))
         pretrainedRandomMap = mazeEscape(rMapWindowsData[0], rMapWindowsData[1], rMapWindowsData[2], textAreaHeight, rMap)
-        testingQTable(rMapQTable, pretrainedRandomMap, "pretrainedRandomQTable")
+        testingQTable(rMapQTable, pretrainedRandomMap, file)
 
-    print("Training a Q-table with 100000 episodes on a random map with rendering on:")
+    print("Training a Q-table with 150000 episodes on a random map with rendering on:")
     newMap = mazeEscape(fieldSize, windowsWidth, windowsHeight, textAreaHeight)
-    newQTable = qTrain(newMap, 100000, True)
+    newQTable = qTrain(newMap, 150000, True)
     testingQTable(newQTable, newMap, "TrainedQTable")
+
+    if savePackage == True:
+        package = createPackage(fieldSize, windowsWidth, windowsHeight, newMap, newQTable)
+        saveToFile(pretrainedPath, "randomMapPreTrained" + str(len(filesInPath)), package)
 
 def file_setup():
     """

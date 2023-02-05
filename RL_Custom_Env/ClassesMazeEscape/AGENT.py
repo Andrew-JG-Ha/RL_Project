@@ -17,7 +17,7 @@ class AGENT(LOCATIONS):
 
         self.placeOnMap(self.currentRow, self.currentColumn, self.currentEntityName)
 
-        self.minReward = -0.5 * len(self.getMap())
+        self.minReward = -0.45 * len(self.getMap())
         self.totalReward = 0.0
         
         self.actionLog = list()

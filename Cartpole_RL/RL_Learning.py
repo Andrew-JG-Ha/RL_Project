@@ -59,7 +59,7 @@ def testing_model(model: type[PPO], environment, number_of_steps=10):
             obs, reward, done, info = environment.step(action)
             environment.render()
             score += reward
-        print("Episode:{} Score:{}".format(step, score))
+        print("Episode:{} Score:{}".format(step, round(score, 3)))
 
 def main():
     learning = False

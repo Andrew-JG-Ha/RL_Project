@@ -49,7 +49,7 @@ def main():
             obs, reward, done, truncated, info = environment.step(action=action)
             score += reward
             
-        print("Episode:{} Score:{}".format(episode, score))
+        print("Episode:{} Score:{}".format(episode, round(score, 3)))
 
 
 if __name__ == "__main__":

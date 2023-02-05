@@ -29,7 +29,7 @@ def qTrain(environment:mazeEscape, numberOfEpisodes, render = False):
             if render == True:
                 if (int(math.log2(episode + 1)) == math.log2(episode + 1)):
                     environment.render(episode)
-                    time.sleep(0.05)
+                    time.sleep(0.1)
     return qTable
 
 def epsilonGreedyPolicy(qTable, episodeNumber, totalEpisodes, environment:mazeEscape, currentState):

@@ -77,7 +77,7 @@ class mazeEscape():
             self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         else:
             map = _map
-            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map, False, False)
+            self.environment = ENVIRONMENT(_fieldSize, _windowsWidth, _windowsHeight, map, False, False, False)
 
         self.agent = AGENT(_fieldSize, _windowsWidth, _windowsHeight, map)
         self.initialMap = map.copy()
@@ -211,13 +211,6 @@ class mazeEscape():
             elif (self.agent.isCurrentEnd() and repeatMap == True):
                 round += 1
                 self.reset()
-        self.close()
-
-    def close(self):
-        """
-        Close the pygame environment
-        """
-        pygame.quit()
 
 # Helper Functions
 def getImage(entityName):
@@ -244,6 +237,8 @@ def getImage(entityName):
         return emptyImg
 
 def initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight):
+    print("in mazeEscapeGame, initializing pygame")
+    pygame.init()
     pygame.display.init()
     gameDisplay = pygame.display.set_mode((_windowsWidth, _windowsHeight + _textAreaHeight))
     pygame.display.set_caption("Maze Escape")

@@ -237,7 +237,6 @@ def getImage(entityName):
         return emptyImg
 
 def initializePygame(_windowsWidth, _windowsHeight, _textAreaHeight):
-    print("in mazeEscapeGame, initializing pygame")
     pygame.init()
     pygame.display.init()
     gameDisplay = pygame.display.set_mode((_windowsWidth, _windowsHeight + _textAreaHeight))

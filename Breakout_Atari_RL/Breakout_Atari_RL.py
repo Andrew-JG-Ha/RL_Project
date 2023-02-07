@@ -23,7 +23,6 @@ def file_setup():
         if (not os.path.exists(modelsPath)):
             os.mkdir(modelsPath)
 
-
 def main():
     train = True
     testing = True
@@ -31,8 +30,6 @@ def main():
 
     a2c_path = os.path.join(os.path.dirname(__file__), "Training", "Models", "A2C_Breakout_Model")
 
-    # ale = ALEInterface()
-    # ale.loadROM(Breakout)
     environment_name = 'ALE/Breakout-v5'
     environment = gym.make(environment_name, render_mode = 'human')
 

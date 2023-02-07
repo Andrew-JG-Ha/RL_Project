@@ -6,7 +6,6 @@ import numpy as np
 
 def main():
     file_setup()
-    pretrainedRandomData0 = None
     savePackage = False
 
     fieldSize = 14

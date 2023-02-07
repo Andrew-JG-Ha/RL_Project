@@ -9,6 +9,9 @@ from ale_py.roms import Breakout
 from ale_py import ALEInterface
 
 def file_setup():
+    """
+    Basic file setup, creating the parent and sub directories to store logss and models
+    """
     parentFolder = "Training"
     logsFolder = "Logs"
     modelsFolder = "Models"

@@ -4,6 +4,7 @@
 #### File: Breakout_Atari_RL
   [ ] Importing an ensuring Atari game works<br/>
   [ ] Apply a policy to the game and train an RL model to play the game<br/>
+  [] Observe the data/training episode evolutions using the tensorboard
   
 ### 2. Reinforcement Learning algorithm (PPO) applied to the cartpole game
 #### File: Cartpole_RL

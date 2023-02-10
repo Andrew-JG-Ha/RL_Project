@@ -1,9 +1,9 @@
 import os
-import gymnasium as gym
+import gym
 import numpy as np
-from keras.optimizers import Adam
-from keras.layers import Dense, Flatten, Conv2D
-from keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense, Flatten, Conv2D
+from tensorflow.keras.models import Sequential
 
 from rl.agents import DQNAgent
 from rl.memory import SequentialMemory
@@ -11,6 +11,8 @@ from rl.policy import EpsGreedyQPolicy, LinearAnnealedPolicy
 
 from ale_py.roms import Breakout
 from ale_py import ALEInterface
+ale = ALEInterface()
+ale.loadROM(Breakout)
 
 def file_setup():
     """
@@ -52,19 +54,20 @@ def main():
     testing = True
     file_setup()
 
-    environment_name = 'ALE/Breakout-v5'
-    environment = gym.make(environment_name, render_mode = 'human')
+    environment_name = 'Breakout-v4'
+    environment = gym.make(environment_name, render_mode = "human")
 
     height, width, channels = environment.observation_space.shape
     actions = environment.action_space.n
 
     model = build_model(height, width, channels, actions)
-    
-    model.summary()
 
     dqn = build_agent(model, actions)
-    dqn.compile(Adam(learning_rate=0.0001))
-    dqn.fit(env=environment, nb_steps=10000, visualize=False, verbose=2)
+    dqn.compile(Adam(learning_rate=0.001))
+    dqn.fit(env=environment, nb_steps=1000, visualize=False, verbose=2)
+    
+    scores = dqn.test(environment, nb_episodes=10, visualize=False)
+    print(np.mean(scores.history["episode reward"]))
 
     episodes = 5
     for episode in range(1, episodes+1):
@@ -73,9 +76,8 @@ def main():
         score = 0
         while not done:
             action = environment.action_space.sample()
-            obs, reward, done, truncated, info = environment.step(action=action)
+            obs, reward, done, info = environment.step(action=action)
             score += reward
-            
         print("Episode:{} Score:{}".format(episode, round(score, 3)))
 
 

@@ -1,9 +1,9 @@
 import os
 import gym
 import numpy as np
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Dense, Flatten, Conv2D
-from tensorflow.keras.models import Sequential
+from tensorflow.python.keras.optimizers import adam_v2
+from tensorflow.python.keras.layers import Dense, Flatten, Conv2D
+from tensorflow.python.keras.models import Sequential
 
 from rl.agents import DQNAgent
 from rl.memory import SequentialMemory
@@ -63,7 +63,8 @@ def main():
     model = build_model(height, width, channels, actions)
 
     dqn = build_agent(model, actions)
-    dqn.compile(Adam(learning_rate=0.001))
+    optimizer = adam_v2.Adam()
+    dqn.compile(optimizer=optimizer)
     dqn.fit(env=environment, nb_steps=1000, visualize=False, verbose=2)
     
     scores = dqn.test(environment, nb_episodes=10, visualize=False)

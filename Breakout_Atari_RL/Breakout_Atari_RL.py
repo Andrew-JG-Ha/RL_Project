@@ -44,6 +44,9 @@ def build_model(height, width, channels, actions):
     return model
 
 def build_agent(model, actions):
+    """
+    This function creates the DQN instance that operates as the agent under training
+    """
     policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr="eps", value_max=1., value_min=.1, value_test=.2, nb_steps=10000) # Degradation of learning rate, epsilon and discount rate as we get nearer to the goal
     memory = SequentialMemory(limit=1000, window_length=3) # letting the agent read from memory
     dqn = DQNAgent(model=model, memory=memory, policy=policy, enable_dueling_network=True, dueling_type="avg", nb_actions=actions, nb_steps_warmup=10000)

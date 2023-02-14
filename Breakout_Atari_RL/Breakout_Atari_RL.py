@@ -33,6 +33,9 @@ def file_setup():
             os.mkdir(modelsPath)
 
 def build_model(height, width, channels, actions):
+    """
+    This function utilizes tensorflow to build a neural network
+    """
     model = Sequential()
     model.add(Conv2D(32, (8,8), strides=(4,4), activation="relu", input_shape=(3, height, width, channels))) # convolution neural net with 32 filters of size 8x8
     model.add(Conv2D(64, (4,4), strides=(2,2), activation="relu")) # convolution neural net with 64 filters of size 4x4
